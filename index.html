@@ -1,0 +1,1479 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#07090e" />
+<title>BuyFromOc — OCHub Marketplace | OC Gadgets</title>
+<meta name="description" content="BuyFromOc by OC Gadgets — Nigeria's verified marketplace for phones, pre-owned cars, PS5 gaming gear, phone repairs, game downloads and smart accessories. Pay securely via Paystack." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+
+<script src="https://js.paystack.co/v1/inline.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['"Plus Jakarta Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+          display: ['Sora', '"Plus Jakarta Sans"', 'sans-serif'],
+        },
+        colors: {
+          ink: { 950:'#07090e', 900:'#0b0e15', 800:'#12161f', 700:'#1b212d', 600:'#252c3a' },
+          oc: { blue:'#1e7fff', purple:'#a855f7', green:'#22c55e', navy:'#0a1428' },
+        },
+        keyframes: {
+          marquee: { '0%':{transform:'translateX(0)'}, '100%':{transform:'translateX(-50%)'} },
+          floaty: { '0%,100%':{transform:'translateY(0)'}, '50%':{transform:'translateY(-12px)'} },
+          popIn: { '0%':{opacity:'0',transform:'translateY(14px) scale(.96)'}, '100%':{opacity:'1',transform:'translateY(0) scale(1)'} },
+        },
+        animation: {
+          marquee: 'marquee 34s linear infinite',
+          floaty: 'floaty 7s ease-in-out infinite',
+          popIn: 'popIn .35s cubic-bezier(.2,.9,.3,1.2) both',
+        },
+        screens: { 'xs': '400px' },
+      },
+    },
+  };
+</script>
+
+<script>
+  (function () {
+    try {
+      var t = localStorage.getItem('bfo-theme');
+      if (t === 'light') document.documentElement.classList.remove('dark');
+      else document.documentElement.classList.add('dark');
+    } catch (e) { document.documentElement.classList.add('dark'); }
+  })();
+</script>
+
+<style>
+  [x-cloak] { display: none !important; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body { font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif; overflow-x: hidden; }
+  ::selection { background: rgba(251,191,36,.35); }
+
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(140,140,155,.35); border-radius: 999px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(251,191,36,.55); }
+
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  .glass { backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); }
+
+  .pill { transition: transform .35s cubic-bezier(.2,.8,.2,1), background-color .3s, color .3s, border-color .3s, box-shadow .35s; }
+  .pill:hover { transform: translateY(-2px) scale(1.045); }
+  .pill:active { transform: translateY(0) scale(.98); }
+
+  .card { transition: transform .5s cubic-bezier(.2,.8,.2,1), box-shadow .5s, border-color .4s; }
+  @media (hover: hover) {
+    .card:hover { transform: translateY(-7px); }
+  }
+  .card-img { transition: transform .85s cubic-bezier(.2,.8,.2,1); }
+  .card:hover .card-img { transform: scale(1.09); }
+
+  .card-shine { position: absolute; inset: 0; opacity: 0; pointer-events: none; background: linear-gradient(115deg, transparent 28%, rgba(255,255,255,.16) 46%, transparent 62%); transition: opacity .55s; }
+  .card:hover .card-shine { opacity: 1; }
+
+  .btn-press { transition: transform .18s cubic-bezier(.2,.8,.2,1), box-shadow .3s, background-color .3s, color .3s, border-color .3s, opacity .3s; }
+  .btn-press:hover { transform: translateY(-1px); }
+  .btn-press:active { transform: translateY(0) scale(.975); }
+
+  .chat-scroll { scroll-behavior: smooth; }
+  .typing-dot { animation: typingBounce 1.2s infinite ease-in-out; }
+  .typing-dot:nth-child(2) { animation-delay: .16s; }
+  .typing-dot:nth-child(3) { animation-delay: .32s; }
+  @keyframes typingBounce { 0%,60%,100%{transform:translateY(0);opacity:.45} 30%{transform:translateY(-5px);opacity:1} }
+
+  .field { transition: border-color .3s, box-shadow .3s, background-color .3s; }
+  .field:focus { outline: none; border-color: rgba(251,191,36,.7); box-shadow: 0 0 0 4px rgba(251,191,36,.14); }
+
+  input[type="range"] { -webkit-appearance: none; appearance: none; height: 6px; border-radius: 999px; background: linear-gradient(90deg,#fbbf24 0%,#22d3ee var(--pct,100%),rgba(140,140,155,.25) var(--pct,100%)); outline: none; }
+  input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 999px; background: #fff; border: 3px solid #fbbf24; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,.35); transition: transform .2s; }
+  input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.18); }
+  input[type="range"]::-moz-range-thumb { width: 18px; height: 18px; border-radius: 999px; background: #fff; border: 3px solid #fbbf24; cursor: pointer; }
+
+  .grid-bg { background-image: linear-gradient(to right,currentColor 1px,transparent 1px), linear-gradient(to bottom,currentColor 1px,transparent 1px); background-size: 46px 46px; }
+  .text-balance { text-wrap: balance; }
+
+  .svc-blue   { box-shadow: 0 12px 40px -12px rgba(30,127,255,.55); border-color: rgba(30,127,255,.35); }
+  .svc-purple { box-shadow: 0 12px 40px -12px rgba(168,85,247,.55); border-color: rgba(168,85,247,.35); }
+  .svc-green  { box-shadow: 0 12px 40px -12px rgba(34,197,94,.55);  border-color: rgba(34,197,94,.35); }
+  .svc-icon-blue   { background: linear-gradient(135deg,rgba(30,127,255,.18),rgba(30,127,255,.04)); color:#1e7fff; border:1px solid rgba(30,127,255,.35); }
+  .svc-icon-purple { background: linear-gradient(135deg,rgba(168,85,247,.18),rgba(168,85,247,.04)); color:#a855f7; border:1px solid rgba(168,85,247,.35); }
+  .svc-icon-green  { background: linear-gradient(135deg,rgba(34,197,94,.18),rgba(34,197,94,.04));  color:#22c55e; border:1px solid rgba(34,197,94,.35); }
+  .svc-title-blue   { color: #1e7fff; }
+  .svc-title-purple { color: #a855f7; }
+  .svc-title-green  { color: #22c55e; }
+
+  /* Horizontal scroll snap for category pills */
+  .pills-scroll { scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch; }
+  .pills-scroll > button { scroll-snap-align: start; }
+
+  /* Prevent iOS zoom on inputs */
+  @media (max-width: 767px) {
+    input, select, textarea { font-size: 16px !important; }
+  }
+
+  /* Safe-area for notched phones */
+  @supports (padding: max(0px)) {
+    .safe-bottom { padding-bottom: max(0.75rem, env(safe-area-inset-bottom)); }
+    .safe-bottom-lg { padding-bottom: max(1.25rem, env(safe-area-inset-bottom)); }
+    .safe-chat { bottom: max(1rem, env(safe-area-inset-bottom)); }
+  }
+</style>
+</head>
+
+<body x-data="app()" x-init="init()"
+  class="min-h-screen bg-zinc-50 text-zinc-900 dark:bg-ink-950 dark:text-zinc-100 antialiased transition-colors duration-500">
+
+<!-- TOASTS -->
+<div class="fixed top-3 left-3 right-3 z-[100] flex flex-col gap-2.5 pointer-events-none sm:top-20 sm:left-auto sm:right-4 sm:max-w-sm">
+  <template x-for="t in toasts" :key="t.id">
+    <div x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-x-8 scale-95" x-transition:enter-end="opacity-100 translate-x-0 scale-100"
+      x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0 translate-x-8"
+      class="pointer-events-auto flex items-start gap-3 rounded-2xl border border-zinc-200/80 dark:border-white/10 bg-white/95 dark:bg-ink-800/95 glass px-3.5 py-3 shadow-2xl sm:px-4">
+      <span class="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full sm:h-7 sm:w-7"
+        :class="{ 'bg-emerald-100 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400': t.type==='success',
+                  'bg-amber-100 text-amber-600 dark:bg-amber-500/15 dark:text-amber-400': t.type==='info',
+                  'bg-rose-100 text-rose-600 dark:bg-rose-500/15 dark:text-rose-400': t.type==='error' }">
+        <i data-lucide="check" class="h-3.5 w-3.5 sm:h-4 sm:w-4" x-show="t.type==='success'"></i>
+        <i data-lucide="info" class="h-3.5 w-3.5 sm:h-4 sm:w-4" x-show="t.type==='info'"></i>
+        <i data-lucide="alert-triangle" class="h-3.5 w-3.5 sm:h-4 sm:w-4" x-show="t.type==='error'"></i>
+      </span>
+      <p class="flex-1 text-[13px] font-medium leading-snug pt-0.5 sm:text-sm sm:pt-1" x-text="t.message"></p>
+      <button @click="toasts = toasts.filter(x => x.id !== t.id)" class="text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200">
+        <i data-lucide="x" class="h-4 w-4"></i>
+      </button>
+    </div>
+  </template>
+</div>
+
+<!-- HEADER -->
+<header id="top" class="sticky top-0 z-40">
+  <div class="hidden border-b border-zinc-200/80 dark:border-white/[0.06] bg-zinc-100/90 dark:bg-black/70 glass md:block">
+    <div class="mx-auto flex h-9 max-w-7xl items-center justify-between px-4 text-[11px] font-medium tracking-wide text-zinc-600 dark:text-zinc-400">
+      <div class="flex items-center gap-2">
+        <i data-lucide="shield-check" class="h-3.5 w-3.5 text-amber-500"></i>
+        <span><span class="text-zinc-800 dark:text-zinc-200 font-semibold">OC Gadgets</span> — Registered · RC 1847392</span>
+      </div>
+      <div class="flex items-center gap-6">
+        <span class="flex items-center gap-1.5"><i data-lucide="truck" class="h-3.5 w-3.5 text-cyan-500"></i> Nationwide delivery</span>
+        <span class="flex items-center gap-1.5"><i data-lucide="phone" class="h-3.5 w-3.5 text-amber-500"></i> <span x-text="formatPhone(whatsapp)"></span></span>
+        <span class="flex items-center gap-1.5"><i data-lucide="credit-card" class="h-3.5 w-3.5 text-emerald-500"></i> Paystack secured</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="glass border-b border-zinc-200/80 dark:border-white/[0.06] bg-white/90 dark:bg-ink-950/80">
+    <div class="mx-auto flex h-14 max-w-7xl items-center gap-2 px-3 sm:h-16 sm:gap-3 sm:px-4">
+      <!-- Logo -->
+      <a href="#top" class="group flex shrink-0 items-center gap-2">
+        <img src="oc-gadgets-logo.png" alt="OC Gadgets" class="h-9 w-9 rounded-xl object-cover shadow-lg shadow-amber-500/25 transition-transform duration-300 group-hover:scale-105 ring-1 ring-white/10 sm:h-11 sm:w-11"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';" />
+        <span class="hidden h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-amber-400 via-amber-500 to-cyan-400 text-ink-950 shadow-lg shadow-amber-500/25 sm:h-11 sm:w-11">
+          <i data-lucide="zap" class="h-4 w-4 sm:h-5 sm:w-5"></i>
+        </span>
+        <span class="leading-none">
+          <span class="block font-display text-base font-extrabold tracking-tight sm:text-lg">BuyFrom<span class="text-amber-500">Oc</span></span>
+          <span class="mt-0.5 hidden text-[9px] font-semibold uppercase tracking-[0.2em] text-zinc-500 xs:block">OCHub Marketplace</span>
+        </span>
+      </a>
+
+      <!-- Desktop nav -->
+      <nav class="ml-6 hidden items-center gap-1 lg:flex">
+        <a href="#top" class="rounded-lg px-3 py-2 text-sm font-semibold text-zinc-700 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-300 dark:hover:bg-white/5 dark:hover:text-white">Home</a>
+        <a href="#services" class="rounded-lg px-3 py-2 text-sm font-semibold text-zinc-700 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-300 dark:hover:bg-white/5 dark:hover:text-white">Services</a>
+        <a href="#catalog" class="rounded-lg px-3 py-2 text-sm font-semibold text-zinc-700 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-300 dark:hover:bg-white/5 dark:hover:text-white">Shop</a>
+        <a href="seller-portal.html" class="rounded-lg px-3 py-2 text-sm font-semibold text-amber-600 hover:bg-amber-400/10 dark:text-amber-400">List your item</a>
+      </nav>
+
+      <div class="flex-1"></div>
+
+      <!-- Actions -->
+      <button @click="toggleTheme()" class="btn-press grid h-9 w-9 shrink-0 place-items-center rounded-xl border border-zinc-200 bg-white/70 text-zinc-600 hover:border-amber-400/60 hover:text-amber-500 dark:border-white/10 dark:bg-white/5 dark:text-zinc-300 sm:h-10 sm:w-10">
+        <i data-lucide="moon" class="h-4 w-4 sm:h-[18px] sm:w-[18px]" x-show="dark"></i>
+        <i data-lucide="sun" class="h-4 w-4 sm:h-[18px] sm:w-[18px]" x-show="!dark"></i>
+      </button>
+
+      <button @click="cartOpen = true" class="btn-press relative grid h-9 w-9 shrink-0 place-items-center rounded-xl border border-zinc-200 bg-white/70 text-zinc-700 hover:border-amber-400/60 hover:text-amber-500 dark:border-white/10 dark:bg-white/5 dark:text-zinc-200 sm:h-10 sm:w-10">
+        <i data-lucide="shopping-bag" class="h-4 w-4 sm:h-[18px] sm:w-[18px]"></i>
+        <span x-show="cartCount > 0" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="scale-0" x-transition:enter-end="scale-100" x-text="cartCount"
+          class="absolute -right-1 -top-1 grid h-4 min-w-[16px] place-items-center rounded-full bg-gradient-to-br from-amber-400 to-amber-500 px-1 text-[10px] font-extrabold text-ink-950 shadow-md sm:-right-1.5 sm:-top-1.5 sm:h-5 sm:min-w-[20px] sm:text-[11px]"></span>
+      </button>
+
+      <a :href="waLink('Hello OC Gadgets 👋 I have an enquiry about a product on BuyFromOc.')" target="_blank" rel="noopener"
+        class="btn-press hidden items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-emerald-500/25 sm:flex">
+        <i data-lucide="message-circle" class="h-4 w-4"></i> Chat
+      </a>
+
+      <button @click="mobileNav = !mobileNav" class="btn-press grid h-9 w-9 shrink-0 place-items-center rounded-xl border border-zinc-200 bg-white/70 text-zinc-700 dark:border-white/10 dark:bg-white/5 dark:text-zinc-200 sm:h-10 sm:w-10 lg:hidden">
+        <i data-lucide="menu" class="h-4 w-4 sm:h-[18px] sm:w-[18px]" x-show="!mobileNav"></i>
+        <i data-lucide="x" class="h-4 w-4 sm:h-[18px] sm:w-[18px]" x-show="mobileNav"></i>
+      </button>
+    </div>
+
+    <!-- Mobile menu -->
+    <div x-show="mobileNav" x-cloak x-transition:enter="transition ease-out duration-250" x-transition:enter-start="opacity-0 -translate-y-3" x-transition:enter-end="opacity-100 translate-y-0"
+      x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-3"
+      class="border-t border-zinc-200/80 dark:border-white/[0.06] bg-white/98 dark:bg-ink-950/98 glass lg:hidden">
+      <div class="mx-auto max-w-7xl space-y-1 px-3 py-3 sm:px-4 sm:py-4">
+        <a href="#top" @click="mobileNav = false" class="flex items-center gap-3 rounded-xl px-3 py-3 text-[14px] font-semibold hover:bg-zinc-100 dark:hover:bg-white/5">
+          <i data-lucide="home" class="h-4 w-4 text-zinc-400"></i> Home
+        </a>
+        <a href="#services" @click="mobileNav = false" class="flex items-center gap-3 rounded-xl px-3 py-3 text-[14px] font-semibold hover:bg-zinc-100 dark:hover:bg-white/5">
+          <i data-lucide="wrench" class="h-4 w-4 text-zinc-400"></i> Our Services
+        </a>
+        <a href="#catalog" @click="mobileNav = false" class="flex items-center gap-3 rounded-xl px-3 py-3 text-[14px] font-semibold hover:bg-zinc-100 dark:hover:bg-white/5">
+          <i data-lucide="shopping-bag" class="h-4 w-4 text-zinc-400"></i> Explore OCHub
+        </a>
+        <a href="#tradein" @click="mobileNav = false" class="flex items-center gap-3 rounded-xl px-3 py-3 text-[14px] font-semibold hover:bg-zinc-100 dark:hover:bg-white/5">
+          <i data-lucide="repeat" class="h-4 w-4 text-zinc-400"></i> Sell / Trade-In
+        </a>
+        <a href="seller-portal.html" class="flex items-center gap-3 rounded-xl px-3 py-3 text-[14px] font-semibold text-amber-600 dark:text-amber-400 hover:bg-amber-400/10">
+          <i data-lucide="plus-circle" class="h-4 w-4"></i> List your item
+        </a>
+        <a :href="waLink('Hello OC Gadgets 👋 I have an enquiry about a product on BuyFromOc.')" target="_blank" rel="noopener"
+          class="mt-2 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 px-4 py-3 text-sm font-bold text-white">
+          <i data-lucide="message-circle" class="h-4 w-4"></i> Chat with OC
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="relative overflow-hidden">
+  <div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+    <div class="absolute -left-40 -top-56 h-[34rem] w-[34rem] rounded-full bg-amber-400/25 blur-[130px] dark:bg-amber-500/10 sm:h-[38rem] sm:w-[38rem]"></div>
+    <div class="absolute -bottom-56 -right-32 h-[30rem] w-[30rem] rounded-full bg-cyan-400/25 blur-[130px] dark:bg-cyan-500/10 sm:h-[34rem] sm:w-[34rem]"></div>
+    <div class="grid-bg absolute inset-0 text-zinc-900 opacity-[0.035] dark:text-white dark:opacity-[0.05]"></div>
+    <div class="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-zinc-50 to-transparent dark:from-ink-950"></div>
+  </div>
+
+  <div class="mx-auto grid max-w-7xl items-center gap-8 px-3 py-10 sm:gap-12 sm:px-4 sm:py-14 lg:grid-cols-[1.05fr_.95fr] lg:gap-14 lg:py-24">
+    <div>
+      <div class="inline-flex items-center gap-2 rounded-full border border-amber-400/40 bg-amber-400/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.14em] text-amber-600 dark:text-amber-400 sm:px-3.5 sm:text-[11px] sm:tracking-[0.16em]">
+        <span class="relative flex h-1.5 w-1.5">
+          <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-500 opacity-75"></span>
+          <span class="relative inline-flex h-1.5 w-1.5 rounded-full bg-amber-500"></span>
+        </span>
+        Every gadget at an affordable price
+      </div>
+
+      <h1 class="mt-4 font-display text-3xl font-extrabold leading-[1.08] tracking-tight text-balance sm:mt-6 sm:text-4xl lg:text-6xl">
+        Buy smarter from
+        <span class="block bg-gradient-to-r from-amber-400 via-amber-500 to-cyan-400 bg-clip-text text-transparent sm:inline">BuyFromOc</span>
+      </h1>
+
+      <p class="mt-4 max-w-xl text-[14px] leading-relaxed text-zinc-600 dark:text-zinc-400 sm:mt-7 sm:text-[15px] lg:text-base">
+        Phones, certified pre-owned cars, PS5 gear, phone repairs, game downloads and smart accessories — all at
+        <span class="font-semibold text-zinc-900 dark:text-zinc-200">OCHub</span>. Inspected, warrantied and delivered anywhere in Nigeria by
+        <span class="font-semibold text-zinc-900 dark:text-zinc-200">OC Gadgets</span>.
+      </p>
+
+      <div class="mt-6 flex flex-col gap-2.5 xs:flex-row xs:flex-wrap xs:items-center sm:mt-9 sm:gap-3">
+        <a href="#catalog" class="btn-press group inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-amber-400 to-amber-500 px-5 py-3.5 text-[13px] font-extrabold text-ink-950 shadow-xl shadow-amber-500/25 sm:px-6 sm:text-sm">
+          <i data-lucide="compass" class="h-4 w-4"></i> Explore OCHub
+          <i data-lucide="arrow-right" class="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"></i>
+        </a>
+        <a href="#services" class="btn-press inline-flex items-center justify-center gap-2 rounded-2xl border border-zinc-300 bg-white/70 px-5 py-3.5 text-[13px] font-bold text-zinc-800 hover:border-cyan-400/70 hover:text-cyan-600 dark:border-white/12 dark:bg-white/5 dark:text-zinc-100 sm:px-6 sm:text-sm">
+          <i data-lucide="wrench" class="h-4 w-4"></i> Our Services
+        </a>
+      </div>
+
+      <div class="mt-8 grid max-w-lg grid-cols-3 gap-3 sm:mt-11 sm:gap-6">
+        <div>
+          <p class="font-display text-lg font-extrabold sm:text-2xl">12,400+</p>
+          <p class="mt-0.5 text-[10px] font-semibold uppercase tracking-wider text-zinc-500 sm:mt-1 sm:text-[11px]">Orders</p>
+        </div>
+        <div class="border-x border-zinc-200 px-3 dark:border-white/10 sm:px-6">
+          <p class="font-display text-lg font-extrabold sm:text-2xl">4.9<span class="text-amber-500">★</span></p>
+          <p class="mt-0.5 text-[10px] font-semibold uppercase tracking-wider text-zinc-500 sm:mt-1 sm:text-[11px]">Rating</p>
+        </div>
+        <div>
+          <p class="font-display text-lg font-extrabold sm:text-2xl">48h</p>
+          <p class="mt-0.5 text-[10px] font-semibold uppercase tracking-wider text-zinc-500 sm:mt-1 sm:text-[11px]">Lagos delivery</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hero graphic -->
+    <div class="relative">
+      <div class="absolute -inset-4 -z-10 rounded-[2rem] bg-gradient-to-br from-amber-400/20 via-transparent to-cyan-400/20 blur-2xl sm:-inset-6 sm:rounded-[2.5rem]"></div>
+      <div class="relative overflow-hidden rounded-2xl border border-zinc-200/80 bg-white/80 p-3 shadow-2xl glass dark:border-white/10 dark:bg-ink-900/70 sm:rounded-3xl sm:p-6">
+        <img src="oc-gadgets-logo.png" alt="OC Gadgets — Phone Repair, Game Selling, Game Downloading"
+          class="mx-auto w-full max-w-md rounded-xl shadow-lg sm:rounded-2xl"
+          onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='flex';" />
+        <div id="logoFallback" style="display:none" class="mx-auto flex aspect-square w-full max-w-md items-center justify-center rounded-2xl border-2 border-dashed border-oc-blue/40 bg-gradient-to-br from-oc-navy via-ink-900 to-ink-950 p-6 text-center">
+          <div class="space-y-4">
+            <div class="mx-auto grid h-20 w-20 place-items-center rounded-full border-2 border-white/20 bg-white/5">
+              <span class="font-display text-3xl font-extrabold text-white">OC</span>
+            </div>
+            <p class="font-display text-2xl font-extrabold tracking-wider text-white sm:text-3xl">GADGETS</p>
+            <p class="text-[10px] font-extrabold uppercase tracking-[0.2em] text-oc-blue sm:text-[11px]">Every gadget at an affordable price</p>
+          </div>
+        </div>
+        <div class="mt-3 grid grid-cols-3 gap-2 sm:mt-5">
+          <div class="flex flex-col items-center justify-center gap-1 rounded-xl border border-oc-blue/30 bg-oc-blue/5 px-1.5 py-2 sm:flex-row sm:gap-1.5 sm:px-2 sm:py-2.5">
+            <i data-lucide="badge-check" class="h-3.5 w-3.5 text-oc-blue"></i>
+            <span class="text-[9px] font-extrabold uppercase tracking-wider text-oc-blue sm:text-[10px]">Quality</span>
+          </div>
+          <div class="flex flex-col items-center justify-center gap-1 rounded-xl border border-oc-purple/30 bg-oc-purple/5 px-1.5 py-2 sm:flex-row sm:gap-1.5 sm:px-2 sm:py-2.5">
+            <i data-lucide="tag" class="h-3.5 w-3.5 text-oc-purple"></i>
+            <span class="text-[9px] font-extrabold uppercase tracking-wider text-oc-purple sm:text-[10px]">Affordable</span>
+          </div>
+          <div class="flex flex-col items-center justify-center gap-1 rounded-xl border border-oc-green/30 bg-oc-green/5 px-1.5 py-2 sm:flex-row sm:gap-1.5 sm:px-2 sm:py-2.5">
+            <i data-lucide="heart-handshake" class="h-3.5 w-3.5 text-oc-green"></i>
+            <span class="text-[9px] font-extrabold uppercase tracking-wider text-oc-green sm:text-[10px]">Trusted</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="relative overflow-hidden border-y border-zinc-200/80 bg-white/60 py-3 dark:border-white/[0.06] dark:bg-ink-900/50 sm:py-3.5">
+  <div class="flex w-max animate-marquee items-center gap-8 whitespace-nowrap sm:gap-14">
+    <template x-for="n in 2" :key="n">
+      <div class="flex items-center gap-8 sm:gap-14">
+        <span class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em] text-zinc-500 sm:text-[11px] sm:tracking-[0.2em]"><i data-lucide="smartphone" class="h-3.5 w-3.5 text-amber-500"></i> Apple · Samsung</span>
+        <span class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em] text-zinc-500 sm:text-[11px] sm:tracking-[0.2em]"><i data-lucide="car" class="h-3.5 w-3.5 text-cyan-500"></i> Toyota · Lexus</span>
+        <span class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em] text-zinc-500 sm:text-[11px] sm:tracking-[0.2em]"><i data-lucide="gamepad-2" class="h-3.5 w-3.5 text-amber-500"></i> PlayStation 5</span>
+        <span class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em] text-zinc-500 sm:text-[11px] sm:tracking-[0.2em]"><i data-lucide="wrench" class="h-3.5 w-3.5 text-oc-blue"></i> Phone Repair</span>
+        <span class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em] text-zinc-500 sm:text-[11px] sm:tracking-[0.2em]"><i data-lucide="cloud-download" class="h-3.5 w-3.5 text-oc-green"></i> Game Downloads</span>
+      </div>
+    </template>
+  </div>
+</div>
+
+<!-- SERVICES -->
+<section id="services" class="scroll-mt-20 relative overflow-hidden sm:scroll-mt-28">
+  <div class="pointer-events-none absolute inset-0 -z-10">
+    <div class="absolute left-1/4 top-0 h-72 w-72 rounded-full bg-oc-blue/10 blur-[120px] sm:h-96 sm:w-96"></div>
+    <div class="absolute right-1/4 bottom-0 h-72 w-72 rounded-full bg-oc-green/10 blur-[120px] sm:h-96 sm:w-96"></div>
+  </div>
+
+  <div class="mx-auto max-w-7xl px-3 py-12 sm:px-4 sm:py-16 lg:py-20">
+    <div class="mx-auto max-w-2xl text-center">
+      <div class="inline-flex items-center gap-2 rounded-full border border-oc-blue/40 bg-oc-blue/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.14em] text-oc-blue sm:px-3.5 sm:text-[11px] sm:tracking-[0.16em]">
+        <i data-lucide="sparkles" class="h-3 w-3"></i> One Stop · All Gadgets
+      </div>
+      <h2 class="mt-4 font-display text-2xl font-extrabold tracking-tight sm:mt-5 sm:text-3xl lg:text-4xl">
+        More than a marketplace — <span class="bg-gradient-to-r from-oc-blue via-oc-purple to-oc-green bg-clip-text text-transparent">a full service hub</span>
+      </h2>
+      <p class="mt-3 text-[13.5px] leading-relaxed text-zinc-600 dark:text-zinc-400 sm:mt-4 sm:text-[14.5px]">
+        OC Gadgets doesn't just sell. We repair, we source, we deliver. Explore the three core services trusted across Nigeria.
+      </p>
+    </div>
+
+    <div class="mt-8 grid gap-4 sm:mt-12 sm:gap-6 lg:grid-cols-3">
+      <template x-for="(svc, key) in services" :key="key">
+        <div class="card group relative overflow-hidden rounded-2xl border bg-white/85 p-5 glass dark:bg-ink-900/70 sm:rounded-3xl sm:p-7"
+          :class="{ 'svc-blue': svc.color==='blue', 'svc-purple': svc.color==='purple', 'svc-green': svc.color==='green' }">
+          <div class="pointer-events-none absolute -right-16 -top-16 h-44 w-44 rounded-full blur-3xl transition-all duration-500"
+            :class="{ 'bg-oc-blue/20 group-hover:bg-oc-blue/30': svc.color==='blue',
+                      'bg-oc-purple/20 group-hover:bg-oc-purple/30': svc.color==='purple',
+                      'bg-oc-green/20 group-hover:bg-oc-green/30': svc.color==='green' }"></div>
+
+          <div class="relative">
+            <div class="flex items-start justify-between gap-3">
+              <span class="grid h-12 w-12 shrink-0 place-items-center rounded-2xl sm:h-14 sm:w-14"
+                :class="{ 'svc-icon-blue': svc.color==='blue', 'svc-icon-purple': svc.color==='purple', 'svc-icon-green': svc.color==='green' }">
+                <i :data-lucide="svc.icon" class="h-6 w-6 sm:h-7 sm:w-7"></i>
+              </span>
+              <span class="rounded-full px-2 py-0.5 text-[9.5px] font-extrabold uppercase tracking-wider sm:px-2.5 sm:py-1 sm:text-[10px]"
+                :class="{ 'border border-oc-blue/40 bg-oc-blue/10 text-oc-blue': svc.color==='blue',
+                          'border border-oc-purple/40 bg-oc-purple/10 text-oc-purple': svc.color==='purple',
+                          'border border-oc-green/40 bg-oc-green/10 text-oc-green': svc.color==='green' }"
+                x-text="svc.subtitle"></span>
+            </div>
+
+            <h3 class="mt-5 font-display text-xl font-extrabold sm:mt-6 sm:text-2xl"
+              :class="{ 'svc-title-blue': svc.color==='blue', 'svc-title-purple': svc.color==='purple', 'svc-title-green': svc.color==='green' }"
+              x-text="svc.label"></h3>
+            <p class="mt-2.5 text-[13px] leading-relaxed text-zinc-600 dark:text-zinc-400 sm:mt-3 sm:text-[13.5px]" x-text="svc.description"></p>
+
+            <ul class="mt-4 space-y-2 sm:mt-5 sm:space-y-2.5">
+              <template x-for="(feat, i) in svc.features" :key="i">
+                <li class="flex items-start gap-2 text-[12px] font-semibold text-zinc-700 dark:text-zinc-300 sm:gap-2.5 sm:text-[12.5px]">
+                  <i data-lucide="check-circle-2" class="mt-0.5 h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4"
+                    :class="{ 'text-oc-blue': svc.color==='blue', 'text-oc-purple': svc.color==='purple', 'text-oc-green': svc.color==='green' }"></i>
+                  <span x-text="feat"></span>
+                </li>
+              </template>
+            </ul>
+
+            <div class="mt-5 flex items-center justify-between gap-3 border-t border-zinc-200/70 pt-4 dark:border-white/[0.06] sm:mt-6 sm:pt-5">
+              <div class="min-w-0">
+                <p class="text-[9.5px] font-extrabold uppercase tracking-wider text-zinc-500 sm:text-[10px]" x-text="svc.priceLabel"></p>
+                <p class="mt-0.5 truncate font-display text-base font-extrabold sm:text-lg"
+                  :class="{ 'text-oc-blue': svc.color==='blue', 'text-oc-purple': svc.color==='purple', 'text-oc-green': svc.color==='green' }"
+                  x-text="money(svc.price)"></p>
+              </div>
+              <button @click="handleServiceCTA(svc)"
+                class="btn-press inline-flex shrink-0 items-center gap-1.5 rounded-xl px-3.5 py-2.5 text-[11.5px] font-extrabold text-white shadow-lg sm:gap-2 sm:px-4 sm:text-xs"
+                :class="{ 'bg-oc-blue shadow-oc-blue/30 hover:bg-oc-blue/90': svc.color==='blue',
+                          'bg-oc-purple shadow-oc-purple/30 hover:bg-oc-purple/90': svc.color==='purple',
+                          'bg-oc-green shadow-oc-green/30 hover:bg-oc-green/90': svc.color==='green' }">
+                <i :data-lucide="svc.icon" class="h-3.5 w-3.5"></i>
+                <span x-text="svc.ctaLabel"></span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </template>
+    </div>
+  </div>
+</section>
+
+<!-- CATALOG -->
+<section id="catalog" class="scroll-mt-20 border-t border-zinc-200/80 dark:border-white/[0.06] sm:scroll-mt-28">
+  <div class="mx-auto max-w-7xl px-3 py-10 sm:px-4 sm:py-14 lg:py-20">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
+      <div>
+        <p class="text-[10px] font-extrabold uppercase tracking-[0.2em] text-amber-500 sm:text-[11px] sm:tracking-[0.22em]">Explore OCHub</p>
+        <h2 class="mt-1.5 font-display text-2xl font-extrabold tracking-tight sm:mt-2 sm:text-3xl lg:text-4xl">Everything OC, in one hub</h2>
+        <p class="mt-2 max-w-xl text-[12.5px] leading-relaxed text-zinc-600 dark:text-zinc-400 sm:mt-3 sm:text-sm">
+          Hand-picked inventory, verified specs and transparent pricing. Tap any item to negotiate on WhatsApp.
+        </p>
+      </div>
+      <div class="flex items-center gap-2 self-start rounded-xl border border-zinc-200 bg-white/70 px-3 py-2 dark:border-white/10 dark:bg-white/5 sm:self-auto sm:rounded-2xl sm:px-4 sm:py-3">
+        <i data-lucide="package-search" class="h-4 w-4 text-cyan-500"></i>
+        <span class="text-[12.5px] font-bold sm:text-sm"><span x-text="filtered.length"></span> items</span>
+      </div>
+    </div>
+
+    <!-- Category pills -->
+    <div class="pills-scroll no-scrollbar mt-5 -mx-3 flex gap-2 overflow-x-auto px-3 pb-2 sm:mt-8 sm:-mx-4 sm:gap-2.5 sm:px-4">
+      <template x-for="c in categories" :key="c.id">
+        <button @click="activeCategory = c.id"
+          class="pill group flex shrink-0 items-center gap-2 rounded-xl border px-3 py-2.5 text-[12.5px] font-bold sm:gap-2.5 sm:rounded-2xl sm:px-4 sm:py-3 sm:text-sm"
+          :class="activeCategory === c.id
+            ? 'border-amber-400/70 bg-gradient-to-r from-amber-400/15 to-cyan-400/10 text-amber-600 shadow-lg shadow-amber-500/10 dark:text-amber-400'
+            : 'border-zinc-200 bg-white/70 text-zinc-600 hover:border-amber-300 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-400'">
+          <span class="grid h-6 w-6 place-items-center rounded-lg transition-colors sm:h-7 sm:w-7"
+            :class="activeCategory === c.id ? 'bg-amber-400 text-ink-950' : 'bg-zinc-100 text-zinc-500 dark:bg-white/8 dark:text-zinc-400'">
+            <i :data-lucide="c.icon" class="h-3.5 w-3.5"></i>
+          </span>
+          <span x-text="c.label"></span>
+          <span class="rounded-full px-1.5 py-0.5 text-[9.5px] font-extrabold sm:text-[10px]"
+            :class="activeCategory === c.id ? 'bg-amber-400/25 text-amber-700 dark:text-amber-300' : 'bg-zinc-100 text-zinc-500 dark:bg-white/8 dark:text-zinc-500'"
+            x-text="c.id === 'all' ? products.length : products.filter(p => p.category === c.id).length"></span>
+        </button>
+      </template>
+    </div>
+
+    <!-- Filter bar -->
+    <div class="mt-4 rounded-2xl border border-zinc-200/80 bg-white/75 p-3 shadow-sm glass dark:border-white/[0.08] dark:bg-ink-900/60 sm:mt-5 sm:rounded-3xl sm:p-4">
+      <div class="grid gap-2.5 sm:gap-4 lg:grid-cols-[1.4fr_1fr_1fr]">
+        <div class="relative">
+          <i data-lucide="search" class="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400 sm:left-4"></i>
+          <input type="text" x-model="search" placeholder="Search iPhone, Camry, PS5…"
+            class="field w-full rounded-xl border border-zinc-200 bg-white py-3 pl-10 pr-9 text-[14px] font-medium dark:border-white/10 dark:bg-white/[0.04] sm:rounded-2xl sm:py-3.5 sm:pl-11 sm:pr-10 sm:text-sm" />
+          <button x-show="search.length > 0" @click="search = ''" class="absolute right-2.5 top-1/2 grid h-7 w-7 -translate-y-1/2 place-items-center rounded-lg text-zinc-400 hover:bg-zinc-100 dark:hover:bg-white/10 sm:right-3">
+            <i data-lucide="x" class="h-3.5 w-3.5"></i>
+          </button>
+        </div>
+
+        <div class="relative">
+          <i data-lucide="arrow-up-down" class="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400 sm:left-4"></i>
+          <select x-model="sortBy" class="field w-full appearance-none rounded-xl border border-zinc-200 bg-white py-3 pl-10 pr-9 text-[14px] font-semibold dark:border-white/10 dark:bg-white/[0.04] sm:rounded-2xl sm:py-3.5 sm:pl-11 sm:pr-10 sm:text-sm">
+            <option value="featured">Featured first</option>
+            <option value="low">Price: Low to High</option>
+            <option value="high">Price: High to Low</option>
+            <option value="rating">Top rated</option>
+            <option value="name">Name: A → Z</option>
+          </select>
+          <i data-lucide="chevron-down" class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400 sm:right-4"></i>
+        </div>
+
+        <div class="rounded-xl border border-zinc-200 bg-white px-3 py-2.5 dark:border-white/10 dark:bg-white/[0.04] sm:rounded-2xl sm:px-4">
+          <div class="flex items-center justify-between text-[10.5px] font-bold uppercase tracking-wider text-zinc-500 sm:text-[11px]">
+            <span>Max price</span>
+            <span class="text-amber-500" x-text="maxPrice >= priceCeiling ? 'No limit' : money(maxPrice)"></span>
+          </div>
+          <input type="range" min="0" :max="priceCeiling" step="250000" x-model.number="maxPrice"
+            @input="$el.style.setProperty('--pct', ($el.value / $el.max * 100) + '%')" class="mt-2 w-full"
+            :style="'--pct:' + (maxPrice / priceCeiling * 100) + '%'" />
+        </div>
+      </div>
+
+      <div class="mt-3 flex flex-wrap items-center gap-2 border-t border-zinc-200/70 pt-3 dark:border-white/[0.06] sm:mt-4 sm:pt-4">
+        <span class="hidden text-[11px] font-bold uppercase tracking-wider text-zinc-500 sm:block">Active:</span>
+        <span class="rounded-full bg-amber-400/15 px-2.5 py-1 text-[10px] font-bold text-amber-600 dark:text-amber-400 sm:px-3 sm:text-[11px]" x-text="categories.find(c => c.id === activeCategory).label"></span>
+        <template x-if="search.trim()">
+          <span class="rounded-full bg-cyan-400/15 px-2.5 py-1 text-[10px] font-bold text-cyan-600 dark:text-cyan-400 sm:px-3 sm:text-[11px]">“<span x-text="search"></span>”</span>
+        </template>
+        <button @click="resetFilters()" class="ml-auto inline-flex items-center gap-1.5 rounded-full border border-zinc-200 px-2.5 py-1 text-[10px] font-bold text-zinc-600 hover:border-rose-400/60 hover:text-rose-500 dark:border-white/10 sm:px-3 sm:text-[11px]">
+          <i data-lucide="rotate-ccw" class="h-3 w-3"></i> Reset
+        </button>
+      </div>
+    </div>
+
+    <!-- Products -->
+    <div class="mt-6 grid grid-cols-2 gap-3 sm:mt-8 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4">
+      <template x-for="p in filtered" :key="p.id">
+        <article class="card group relative flex flex-col overflow-hidden rounded-2xl border border-zinc-200/80 bg-white shadow-sm transition-all hover:border-amber-400/50 hover:shadow-2xl dark:border-white/[0.07] dark:bg-ink-900 sm:rounded-3xl">
+          <div class="relative cursor-pointer overflow-hidden" @click="openProduct(p)">
+            <div class="relative aspect-square w-full sm:aspect-[4/3]" :style="'background-image: linear-gradient(135deg,' + p.g1 + ',' + p.g2 + ')'">
+              <span class="absolute inset-0 grid place-items-center text-4xl opacity-35 sm:text-6xl" x-text="p.emoji"></span>
+              <img :src="p.img" @error="$el.style.display='none'" :alt="p.name" loading="lazy" class="card-img relative h-full w-full object-cover" />
+              <div class="card-shine"></div>
+            </div>
+
+            <div class="absolute left-2 top-2 flex flex-col items-start gap-1 sm:left-3 sm:top-3 sm:gap-1.5">
+              <span class="rounded-full px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-ink-950 sm:px-2.5 sm:py-1 sm:text-[10px]" :style="'background:' + p.badgeColor" x-text="p.badge"></span>
+              <span class="hidden rounded-full bg-black/55 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white backdrop-blur sm:inline-block sm:px-2.5 sm:py-1 sm:text-[10px]" x-text="p.condition"></span>
+            </div>
+
+            <button @click.stop="toggleWish(p)" class="absolute right-2 top-2 grid h-8 w-8 place-items-center rounded-full bg-black/45 text-white backdrop-blur transition-all hover:scale-110 hover:bg-rose-500 sm:right-3 sm:top-3 sm:h-9 sm:w-9"
+              :class="wishlist.includes(p.id) ? 'bg-rose-500' : ''">
+              <i data-lucide="heart" class="h-3.5 w-3.5 sm:h-4 sm:w-4" :class="wishlist.includes(p.id) ? 'fill-current' : ''"></i>
+            </button>
+          </div>
+
+          <div class="flex flex-1 flex-col p-3 sm:p-4">
+            <div class="flex items-center justify-between gap-2">
+              <span class="truncate text-[9.5px] font-extrabold uppercase tracking-[0.14em] text-zinc-400 sm:text-[10px]" x-text="p.brand"></span>
+              <span class="flex shrink-0 items-center gap-1 text-[10px] font-bold text-zinc-500 sm:text-[11px]">
+                <i data-lucide="star" class="h-3 w-3 fill-amber-400 text-amber-400"></i>
+                <span x-text="p.rating"></span>
+              </span>
+            </div>
+
+            <h3 class="mt-1.5 line-clamp-2 cursor-pointer font-display text-[12.5px] font-bold leading-snug transition-colors group-hover:text-amber-500 sm:mt-2 sm:text-[15px]"
+              @click="openProduct(p)" x-text="p.name"></h3>
+
+            <p class="mt-1.5 line-clamp-1 text-[10.5px] leading-relaxed text-zinc-500 sm:mt-2 sm:line-clamp-2 sm:text-[11.5px]" x-text="p.specs.slice(0,2).join(' · ')"></p>
+
+            <div class="mt-3 flex items-end justify-between gap-2 sm:mt-4">
+              <div class="min-w-0">
+                <p class="truncate font-display text-[15px] font-extrabold leading-none sm:text-lg" x-text="money(p.price)"></p>
+                <p class="mt-1 text-[10px] font-semibold text-zinc-400 line-through sm:mt-1.5 sm:text-[11px]" x-show="p.oldPrice > 0" x-text="p.oldPrice ? money(p.oldPrice) : ''"></p>
+              </div>
+              <span class="shrink-0 rounded-full px-1.5 py-0.5 text-[9px] font-extrabold sm:px-2 sm:py-1 sm:text-[10px]"
+                :class="p.stock <= 3 ? 'bg-rose-100 text-rose-600 dark:bg-rose-500/15 dark:text-rose-400' : 'bg-emerald-100 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400'"
+                x-text="p.stock <= 3 ? 'Only ' + p.stock : 'In stock'"></span>
+            </div>
+
+            <div class="mt-3 flex gap-1.5 sm:mt-4 sm:gap-2">
+              <button @click="addToCart(p, 1)" class="btn-press flex flex-1 items-center justify-center gap-1 rounded-lg bg-zinc-900 py-2 text-[10.5px] font-extrabold text-white hover:bg-amber-400 hover:text-ink-950 dark:bg-white dark:text-ink-950 sm:gap-1.5 sm:rounded-xl sm:py-2.5 sm:text-xs">
+                <i data-lucide="plus" class="h-3 w-3 sm:h-3.5 sm:w-3.5"></i> <span class="hidden xs:inline">Add</span>
+              </button>
+              <button @click="productWhatsApp(p, 1)" class="btn-press grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-emerald-500 text-white hover:bg-emerald-600 sm:h-10 sm:w-10 sm:rounded-xl">
+                <i data-lucide="message-circle" class="h-3.5 w-3.5 sm:h-4 sm:w-4"></i>
+              </button>
+            </div>
+          </div>
+        </article>
+      </template>
+    </div>
+
+    <div x-show="filtered.length === 0" x-cloak class="mt-8 rounded-2xl border border-dashed border-zinc-300 bg-white/60 px-4 py-12 text-center dark:border-white/12 dark:bg-white/[0.02] sm:mt-10 sm:rounded-3xl sm:px-6 sm:py-16">
+      <span class="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-zinc-100 text-zinc-400 dark:bg-white/5 sm:h-16 sm:w-16">
+        <i data-lucide="search-x" class="h-6 w-6 sm:h-7 sm:w-7"></i>
+      </span>
+      <h3 class="mt-4 font-display text-base font-bold sm:mt-5 sm:text-lg">No items match your filters</h3>
+      <p class="mx-auto mt-1.5 max-w-sm text-[12.5px] text-zinc-500 sm:mt-2 sm:text-sm">Try widening your price range or clearing the search.</p>
+      <button @click="resetFilters()" class="btn-press mt-5 rounded-xl bg-zinc-900 px-4 py-2.5 text-[11.5px] font-extrabold text-white dark:bg-white dark:text-ink-950 sm:mt-6 sm:text-xs">Reset filters</button>
+    </div>
+  </div>
+</section>
+
+<!-- TRADE-IN -->
+<section id="tradein" class="scroll-mt-20 border-y border-zinc-200/80 bg-white/70 dark:border-white/[0.06] dark:bg-ink-900/40 sm:scroll-mt-28">
+  <div class="mx-auto max-w-7xl px-3 py-12 sm:px-4 sm:py-16 lg:py-20">
+    <div class="grid gap-8 sm:gap-12 lg:grid-cols-[1fr_1.15fr]">
+      <div>
+        <p class="text-[10px] font-extrabold uppercase tracking-[0.2em] text-cyan-500 sm:text-[11px] sm:tracking-[0.22em]">Sell · Swap · Trade-In</p>
+        <h2 class="mt-2.5 font-display text-2xl font-extrabold tracking-tight sm:mt-3 sm:text-3xl lg:text-4xl">
+          Turn your old device into <span class="bg-gradient-to-r from-amber-400 to-cyan-400 bg-clip-text text-transparent">instant value</span>
+        </h2>
+        <p class="mt-3.5 max-w-lg text-[13px] leading-relaxed text-zinc-600 dark:text-zinc-400 sm:mt-4 sm:text-sm">
+          Submit your phone, car, console or gadget. OC Gadgets evaluates it within 24 hours and pays out in cash or credits toward anything in OCHub.
+        </p>
+        <a href="seller-portal.html" class="btn-press mt-5 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 px-4 py-3 text-[13px] font-extrabold text-ink-950 shadow-lg shadow-amber-500/25 sm:mt-6 sm:rounded-2xl sm:px-5 sm:py-3.5 sm:text-sm">
+          <i data-lucide="arrow-up-right" class="h-4 w-4"></i> Open Seller Portal
+        </a>
+      </div>
+
+      <div class="rounded-2xl border border-zinc-200/80 bg-white/85 p-4 shadow-xl glass dark:border-white/[0.08] dark:bg-ink-900/70 sm:rounded-3xl sm:p-6 lg:p-8">
+        <div class="flex items-center gap-3">
+          <span class="grid h-10 w-10 place-items-center rounded-2xl bg-gradient-to-br from-amber-400 to-cyan-400 text-ink-950 sm:h-11 sm:w-11">
+            <i data-lucide="repeat" class="h-4 w-4 sm:h-5 sm:w-5"></i>
+          </span>
+          <div class="min-w-0">
+            <h3 class="font-display text-base font-extrabold sm:text-lg">Quick Trade-In</h3>
+            <p class="text-[10px] font-semibold uppercase tracking-wider text-zinc-500 sm:text-[11px]">OC Gadgets · Verified Buyback</p>
+          </div>
+        </div>
+
+        <form @submit.prevent="submitTradeIn()" class="mt-5 space-y-3 sm:mt-7 sm:space-y-4">
+          <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
+            <input type="text" x-model="tradeIn.name" placeholder="Full name *" class="field w-full rounded-xl border border-zinc-200 bg-white px-3.5 py-3 text-[14px] font-medium dark:border-white/10 dark:bg-white/[0.04] sm:px-4 sm:text-sm" />
+            <input type="tel" x-model="tradeIn.phone" placeholder="WhatsApp *" class="field w-full rounded-xl border border-zinc-200 bg-white px-3.5 py-3 text-[14px] font-medium dark:border-white/10 dark:bg-white/[0.04] sm:px-4 sm:text-sm" />
+          </div>
+          <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
+            <select x-model="tradeIn.category" class="field w-full appearance-none rounded-xl border border-zinc-200 bg-white px-3.5 py-3 text-[14px] font-semibold dark:border-white/10 dark:bg-white/[0.04] sm:px-4 sm:text-sm">
+              <option>Phone / Tablet</option><option>Car / Automotive</option><option>PS / Gaming Gear</option><option>Accessory / Wearable</option><option>Other Gadget</option>
+            </select>
+            <select x-model="tradeIn.condition" class="field w-full appearance-none rounded-xl border border-zinc-200 bg-white px-3.5 py-3 text-[14px] font-semibold dark:border-white/10 dark:bg-white/[0.04] sm:px-4 sm:text-sm">
+              <option>Brand new / Sealed</option><option>Excellent</option><option>Good</option><option>Fair / Needs repair</option>
+            </select>
+          </div>
+          <input type="text" x-model="tradeIn.model" placeholder="Item / model *" class="field w-full rounded-xl border border-zinc-200 bg-white px-3.5 py-3 text-[14px] font-medium dark:border-white/10 dark:bg-white/[0.04] sm:px-4 sm:text-sm" />
+          <textarea x-model="tradeIn.notes" rows="2" placeholder="Notes (optional)" class="field w-full resize-none rounded-xl border border-zinc-200 bg-white px-3.5 py-3 text-[14px] font-medium dark:border-white/10 dark:bg-white/[0.04] sm:px-4 sm:text-sm"></textarea>
+          <button type="submit" class="btn-press flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 px-4 py-3.5 text-[13px] font-extrabold text-ink-950 shadow-lg shadow-amber-500/25 sm:text-sm">
+            <i data-lucide="send" class="h-4 w-4"></i> Submit on WhatsApp
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="relative overflow-hidden bg-zinc-100 dark:bg-ink-950">
+  <div class="relative mx-auto max-w-7xl px-3 py-10 sm:px-4 sm:py-14 lg:py-16">
+    <div class="grid gap-8 sm:grid-cols-2 sm:gap-10 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
+      <div class="sm:col-span-2 lg:col-span-1">
+        <div class="flex items-center gap-2.5">
+          <img src="oc-gadgets-logo.png" alt="OC Gadgets" class="h-11 w-11 rounded-xl object-cover shadow-lg shadow-amber-500/20 ring-1 ring-white/10 sm:h-12 sm:w-12"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';" />
+          <span class="hidden h-11 w-11 place-items-center rounded-xl bg-gradient-to-br from-amber-400 to-cyan-400 text-ink-950 sm:h-12 sm:w-12">
+            <i data-lucide="zap" class="h-5 w-5 sm:h-6 sm:w-6"></i>
+          </span>
+          <span class="leading-none">
+            <span class="block font-display text-base font-extrabold sm:text-lg">BuyFrom<span class="text-amber-500">Oc</span></span>
+            <span class="mt-0.5 block text-[9px] font-semibold uppercase tracking-[0.2em] text-zinc-500">One Stop · All Gadgets</span>
+          </span>
+        </div>
+        <p class="mt-4 max-w-xs text-[12.5px] leading-relaxed text-zinc-600 dark:text-zinc-400 sm:mt-5 sm:text-[13px]">
+          The online storefront of <span class="font-semibold text-zinc-900 dark:text-zinc-200">OC Gadgets</span> — Nigeria's trusted destination for phones, certified pre-owned vehicles, gaming gear, phone repairs and smart accessories.
+        </p>
+        <div class="mt-4 rounded-xl border border-oc-blue/25 bg-oc-blue/5 px-3 py-2.5 sm:mt-5 sm:px-3.5 sm:py-3">
+          <div class="flex items-center gap-2">
+            <i data-lucide="lock" class="h-3.5 w-3.5 text-oc-blue"></i>
+            <p class="text-[10px] font-extrabold uppercase tracking-wider text-oc-blue sm:text-[11px]">Secured by Paystack</p>
+          </div>
+          <p class="mt-1 text-[10.5px] leading-relaxed text-zinc-600 dark:text-zinc-400 sm:text-[11px]">All card payments encrypted and processed securely.</p>
+        </div>
+      </div>
+
+      <div>
+        <h4 class="text-[10px] font-extrabold uppercase tracking-[0.18em] text-zinc-500 sm:text-[11px]">Services</h4>
+        <ul class="mt-3.5 space-y-2.5 text-[12.5px] font-semibold text-zinc-600 dark:text-zinc-400 sm:mt-5 sm:space-y-3 sm:text-[13px]">
+          <template x-for="(svc, key) in services" :key="key">
+            <li><a href="#services" class="transition-colors hover:text-amber-500" x-text="svc.label"></a></li>
+          </template>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="text-[10px] font-extrabold uppercase tracking-[0.18em] text-zinc-500 sm:text-[11px]">Explore</h4>
+        <ul class="mt-3.5 space-y-2.5 text-[12.5px] font-semibold text-zinc-600 dark:text-zinc-400 sm:mt-5 sm:space-y-3 sm:text-[13px]">
+          <li><a href="#catalog" @click="activeCategory = 'phones'" class="hover:text-amber-500">Phones &amp; Tablets</a></li>
+          <li><a href="#catalog" @click="activeCategory = 'cars'" class="hover:text-amber-500">Cars</a></li>
+          <li><a href="#catalog" @click="activeCategory = 'gaming'" class="hover:text-amber-500">Gaming</a></li>
+          <li><a href="seller-portal.html" class="hover:text-amber-500">Sell / Trade-In</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="text-[10px] font-extrabold uppercase tracking-[0.18em] text-zinc-500 sm:text-[11px]">Contact</h4>
+        <ul class="mt-3.5 space-y-2.5 text-[12.5px] font-semibold text-zinc-600 dark:text-zinc-400 sm:mt-5 sm:space-y-3.5 sm:text-[13px]">
+          <li class="flex items-start gap-2.5"><i data-lucide="map-pin" class="mt-0.5 h-4 w-4 shrink-0 text-amber-500"></i><span>12 Adeola Odeku St,<br/>Victoria Island, Lagos</span></li>
+          <li class="flex items-center gap-2.5"><i data-lucide="phone" class="h-4 w-4 shrink-0 text-cyan-500"></i><a :href="'tel:+' + whatsapp" class="hover:text-amber-500" x-text="formatPhone(whatsapp)"></a></li>
+          <li class="flex items-center gap-2.5"><i data-lucide="mail" class="h-4 w-4 shrink-0 text-amber-500"></i><a href="mailto:sales@buyfromoc.ng" class="hover:text-amber-500">sales@buyfromoc.ng</a></li>
+          <li class="flex items-center gap-2.5"><i data-lucide="clock" class="h-4 w-4 shrink-0 text-cyan-500"></i><span>Mon – Sat · 8am – 7pm</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mt-10 border-t border-zinc-200 pt-5 dark:border-white/[0.07] sm:mt-14 sm:pt-7">
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+        <p class="text-[10.5px] leading-relaxed text-zinc-500 sm:text-[11.5px]">
+          <span class="font-bold text-zinc-700 dark:text-zinc-300">OC Gadgets</span> · RC 1847392 · © <span x-text="new Date().getFullYear()"></span>. All rights reserved.
+        </p>
+        <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+          <span class="rounded-lg border border-emerald-400/40 bg-emerald-400/10 px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 sm:px-3 sm:py-1.5 sm:text-[10px]">Paystack</span>
+          <span class="rounded-lg border border-zinc-200 bg-white px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-wider text-zinc-500 dark:border-white/10 dark:bg-white/5 sm:px-3 sm:py-1.5 sm:text-[10px]">Visa</span>
+          <span class="rounded-lg border border-zinc-200 bg-white px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-wider text-zinc-500 dark:border-white/10 dark:bg-white/5 sm:px-3 sm:py-1.5 sm:text-[10px]">Mastercard</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- CART DRAWER -->
+<div x-show="cartOpen" x-cloak class="fixed inset-0 z-[70]">
+  <div x-show="cartOpen" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+    x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+    @click="cartOpen = false" class="absolute inset-0 bg-zinc-950/60 backdrop-blur-sm"></div>
+
+  <div x-show="cartOpen" x-transition:enter="transition ease-out duration-400" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0"
+    x-transition:leave="transition ease-in duration-300" x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full"
+    class="absolute right-0 top-0 flex h-full w-full flex-col border-l border-zinc-200 bg-white shadow-2xl dark:border-white/10 dark:bg-ink-900 sm:max-w-md">
+    <div class="flex items-center justify-between border-b border-zinc-200 px-4 py-3.5 dark:border-white/[0.08] sm:px-5 sm:py-4">
+      <div class="flex items-center gap-2.5">
+        <span class="grid h-8 w-8 place-items-center rounded-xl bg-amber-400/15 text-amber-500 sm:h-9 sm:w-9"><i data-lucide="shopping-bag" class="h-4 w-4"></i></span>
+        <div>
+          <h3 class="font-display text-sm font-extrabold leading-none sm:text-base">Your Cart</h3>
+          <p class="mt-0.5 text-[10.5px] font-semibold text-zinc-500 sm:mt-1 sm:text-[11px]"><span x-text="cartCount"></span> item(s)</p>
+        </div>
+      </div>
+      <button @click="cartOpen = false" class="grid h-8 w-8 place-items-center rounded-xl text-zinc-400 hover:bg-zinc-100 dark:hover:bg-white/8 sm:h-9 sm:w-9"><i data-lucide="x" class="h-4 w-4"></i></button>
+    </div>
+
+    <div class="border-b border-zinc-200 px-4 py-3 dark:border-white/[0.08] sm:px-5 sm:py-4">
+      <div class="flex items-center justify-between gap-2 text-[10.5px] font-bold sm:text-[11.5px]">
+        <span class="flex items-center gap-1.5 text-zinc-600 dark:text-zinc-400">
+          <i data-lucide="truck" class="h-3.5 w-3.5 shrink-0 text-cyan-500"></i>
+          <span x-show="shippingLeft > 0">Add <span class="text-amber-500" x-text="money(shippingLeft)"></span> for FREE delivery</span>
+          <span x-show="shippingLeft <= 0" class="text-emerald-500">FREE delivery unlocked 🎉</span>
+        </span>
+        <span class="shrink-0 text-zinc-400" x-text="Math.round(shippingPct) + '%'"></span>
+      </div>
+      <div class="mt-2 h-1.5 overflow-hidden rounded-full bg-zinc-200 dark:bg-white/10 sm:mt-2.5">
+        <div class="h-full rounded-full bg-gradient-to-r from-amber-400 to-cyan-400 transition-all duration-700" :style="'width:' + shippingPct + '%'"></div>
+      </div>
+    </div>
+
+    <div class="flex-1 overflow-y-auto px-4 py-3 sm:px-5 sm:py-4">
+      <div x-show="cart.length === 0" class="flex h-full flex-col items-center justify-center text-center">
+        <span class="grid h-16 w-16 place-items-center rounded-3xl bg-zinc-100 text-zinc-400 dark:bg-white/5 sm:h-20 sm:w-20"><i data-lucide="shopping-cart" class="h-7 w-7 sm:h-8 sm:w-8"></i></span>
+        <h4 class="mt-4 font-display text-sm font-extrabold sm:mt-5 sm:text-base">Your cart is empty</h4>
+        <p class="mt-1.5 max-w-[15rem] text-[12px] text-zinc-500 sm:mt-2 sm:text-[13px]">Browse OCHub and add phones, cars, consoles or accessories.</p>
+        <button @click="cartOpen = false; document.getElementById('catalog').scrollIntoView({behavior:'smooth'})" class="btn-press mt-5 rounded-xl bg-zinc-900 px-4 py-2.5 text-[11.5px] font-extrabold text-white dark:bg-white dark:text-ink-950 sm:mt-6 sm:px-5 sm:text-xs">Explore OCHub</button>
+      </div>
+
+      <div class="space-y-2.5 sm:space-y-3">
+        <template x-for="item in cart" :key="item.id">
+          <div class="flex gap-2.5 rounded-2xl border border-zinc-200 bg-white p-2.5 dark:border-white/[0.08] dark:bg-white/[0.03] sm:gap-3 sm:p-3">
+            <div class="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl sm:h-20 sm:w-20" :style="'background-image: linear-gradient(135deg,' + item.g1 + ',' + item.g2 + ')'">
+              <span class="absolute inset-0 grid place-items-center text-xl opacity-40 sm:text-2xl" x-text="item.emoji"></span>
+              <img :src="item.img" @error="$el.style.display='none'" :alt="item.name" class="relative h-full w-full object-cover" />
+            </div>
+            <div class="flex min-w-0 flex-1 flex-col">
+              <div class="flex items-start justify-between gap-2">
+                <h4 class="line-clamp-2 text-[11.5px] font-bold leading-snug sm:text-[12.5px]" x-text="item.name"></h4>
+                <button @click="removeItem(item.id)" class="shrink-0 text-zinc-400 hover:text-rose-500"><i data-lucide="trash-2" class="h-3.5 w-3.5"></i></button>
+              </div>
+              <p class="mt-0.5 text-[10px] font-semibold uppercase tracking-wide text-zinc-400 sm:mt-1 sm:text-[11px]" x-text="item.condition"></p>
+              <div class="mt-auto flex items-center justify-between pt-1.5 sm:pt-2">
+                <div class="flex items-center gap-0.5 rounded-lg border border-zinc-200 dark:border-white/10 sm:gap-1">
+                  <button @click="dec(item)" class="grid h-6 w-6 place-items-center rounded-l-lg text-zinc-500 hover:bg-zinc-100 dark:hover:bg-white/8 sm:h-7 sm:w-7"><i data-lucide="minus" class="h-3 w-3"></i></button>
+                  <span class="w-6 text-center text-[11.5px] font-extrabold sm:w-7 sm:text-xs" x-text="item.qty"></span>
+                  <button @click="inc(item)" class="grid h-6 w-6 place-items-center rounded-r-lg text-zinc-500 hover:bg-zinc-100 dark:hover:bg-white/8 sm:h-7 sm:w-7"><i data-lucide="plus" class="h-3 w-3"></i></button>
+                </div>
+                <p class="font-display text-[13px] font-extrabold sm:text-sm" x-text="money(item.price * item.qty)"></p>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+
+    <div x-show="cart.length > 0" class="safe-bottom-lg border-t border-zinc-200 bg-zinc-50/80 px-4 py-4 dark:border-white/[0.08] dark:bg-white/[0.02] sm:px-5 sm:py-5">
+      <div class="space-y-2 text-[12.5px] font-semibold sm:space-y-2.5 sm:text-[13px]">
+        <div class="flex justify-between text-zinc-500"><span>Subtotal</span><span class="text-zinc-900 dark:text-zinc-100" x-text="money(cartTotal)"></span></div>
+        <div class="flex justify-between text-zinc-500"><span>Delivery</span><span :class="shippingLeft <= 0 ? 'text-emerald-500 font-extrabold' : 'text-zinc-900 dark:text-zinc-100'" x-text="shippingLeft <= 0 ? 'FREE' : money(deliveryFee)"></span></div>
+        <div class="flex items-end justify-between border-t border-zinc-200 pt-2.5 dark:border-white/[0.08] sm:pt-3">
+          <span class="text-[10.5px] font-extrabold uppercase tracking-wider text-zinc-500 sm:text-[11px]">Total</span>
+          <span class="font-display text-lg font-extrabold text-amber-500 sm:text-xl" x-text="money(grandTotal)"></span>
+        </div>
+      </div>
+      <div class="mt-4 space-y-2 sm:mt-5 sm:space-y-2.5">
+        <button @click="openPaymentChooser()" class="btn-press flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-oc-blue to-oc-blue/80 px-4 py-3 text-[13px] font-extrabold text-white shadow-lg shadow-oc-blue/30 sm:py-3.5 sm:text-sm">
+          <i data-lucide="credit-card" class="h-4 w-4"></i> Pay with Paystack
+        </button>
+        <button @click="checkoutWhatsApp()" class="btn-press flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 px-4 py-3 text-[13px] font-extrabold text-white shadow-lg shadow-emerald-500/25 sm:py-3.5 sm:text-sm">
+          <i data-lucide="message-circle" class="h-4 w-4"></i> Order via WhatsApp
+        </button>
+        <button @click="clearCart()" class="w-full py-1 text-[10.5px] font-bold uppercase tracking-wider text-zinc-400 hover:text-rose-500 sm:text-[11px]">Clear cart</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAYMENT CHOOSER -->
+<div x-show="payModalOpen" x-cloak class="fixed inset-0 z-[85] flex items-end justify-center p-0 sm:items-center sm:p-4">
+  <div x-show="payModalOpen" x-transition:enter="transition ease-out duration-250" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+    x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+    @click="payModalOpen = false" class="absolute inset-0 bg-zinc-950/70 backdrop-blur-sm"></div>
+  <div x-show="payModalOpen" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-8 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+    class="relative w-full max-w-md overflow-hidden rounded-t-3xl border border-zinc-200 bg-white shadow-2xl dark:border-white/10 dark:bg-ink-900 sm:rounded-3xl">
+    <div class="relative overflow-hidden bg-gradient-to-br from-oc-blue to-oc-blue/70 px-5 py-5 sm:px-6 sm:py-6">
+      <button @click="payModalOpen = false" class="absolute right-3.5 top-3.5 grid h-8 w-8 place-items-center rounded-lg text-white/80 hover:bg-white/10 sm:right-4 sm:top-4"><i data-lucide="x" class="h-4 w-4"></i></button>
+      <div class="flex items-center gap-2.5">
+        <span class="grid h-9 w-9 place-items-center rounded-xl bg-white text-oc-blue sm:h-10 sm:w-10"><i data-lucide="lock" class="h-4 w-4 sm:h-5 sm:w-5"></i></span>
+        <div>
+          <p class="text-[10px] font-extrabold uppercase tracking-wider text-white/80 sm:text-[11px]">Secure Checkout</p>
+          <h3 class="font-display text-base font-extrabold text-white sm:text-lg">Choose payment method</h3>
+        </div>
+      </div>
+    </div>
+    <div class="safe-bottom-lg p-4 sm:p-6">
+      <div class="mb-4 rounded-2xl border border-zinc-200 bg-zinc-50/70 p-3.5 dark:border-white/10 dark:bg-white/[0.02] sm:mb-5 sm:p-4">
+        <div class="space-y-2 text-[12px] sm:text-[12.5px]">
+          <div class="flex justify-between"><span class="font-semibold text-zinc-500"><span x-text="cartCount"></span> item(s)</span><span class="font-bold" x-text="money(cartTotal)"></span></div>
+          <div class="flex justify-between"><span class="font-semibold text-zinc-500">Delivery</span><span class="font-bold" :class="shippingLeft <= 0 ? 'text-emerald-500' : ''" x-text="shippingLeft <= 0 ? 'FREE' : money(deliveryFee)"></span></div>
+          <div class="flex justify-between border-t border-zinc-200 pt-2 dark:border-white/10"><span class="text-[10.5px] font-extrabold uppercase tracking-wider text-zinc-500 sm:text-[11px]">Total</span><span class="font-display text-base font-extrabold text-oc-blue" x-text="money(grandTotal)"></span></div>
+        </div>
+      </div>
+      <div class="mb-3.5 sm:mb-4">
+        <label class="mb-1.5 block text-[10.5px] font-extrabold uppercase tracking-wider text-zinc-500 sm:text-[11px]">Email (for receipt) *</label>
+        <input type="email" x-model="payEmail" placeholder="you@email.com" class="field w-full rounded-xl border border-zinc-200 bg-white px-3.5 py-3 text-[14px] font-medium dark:border-white/10 dark:bg-white/[0.04] sm:px-4 sm:text-sm" />
+      </div>
+      <div class="space-y-2.5 sm:space-y-3">
+        <button @click="payWithPaystack()" :disabled="paying" class="btn-press group flex w-full items-center gap-3 rounded-2xl border-2 border-oc-blue/40 bg-oc-blue/5 p-3.5 text-left hover:border-oc-blue hover:bg-oc-blue/10 disabled:opacity-50 sm:gap-4 sm:p-4">
+          <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white shadow-sm sm:h-12 sm:w-12"><i data-lucide="credit-card" class="h-5 w-5 text-oc-blue sm:h-6 sm:w-6"></i></span>
+          <div class="min-w-0 flex-1">
+            <p class="text-[13px] font-extrabold sm:text-sm">Pay online now</p>
+            <p class="mt-0.5 text-[10.5px] text-zinc-500 sm:text-[11.5px]">Card · Transfer · USSD</p>
+          </div>
+          <i data-lucide="arrow-right" class="h-4 w-4 text-oc-blue"></i>
+        </button>
+        <button @click="checkoutWhatsApp(); payModalOpen = false;" class="btn-press group flex w-full items-center gap-3 rounded-2xl border-2 border-emerald-400/40 bg-emerald-400/5 p-3.5 text-left hover:border-emerald-500 sm:gap-4 sm:p-4">
+          <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white shadow-sm sm:h-12 sm:w-12"><i data-lucide="message-circle" class="h-5 w-5 text-emerald-500 sm:h-6 sm:w-6"></i></span>
+          <div class="min-w-0 flex-1">
+            <p class="text-[13px] font-extrabold sm:text-sm">Order via WhatsApp</p>
+            <p class="mt-0.5 text-[10.5px] text-zinc-500 sm:text-[11.5px]">Chat, negotiate, pay on delivery</p>
+          </div>
+          <i data-lucide="arrow-right" class="h-4 w-4 text-emerald-500"></i>
+        </button>
+      </div>
+      <div class="mt-4 flex items-center justify-center gap-2 text-[10px] font-semibold text-zinc-400 sm:mt-5 sm:text-[11px]">
+        <i data-lucide="shield-check" class="h-3.5 w-3.5 text-oc-blue"></i>
+        <span>Secured by <span class="text-oc-blue font-extrabold">Paystack</span> · PCI-DSS</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRODUCT MODAL -->
+<div x-show="modalOpen" x-cloak class="fixed inset-0 z-[80] flex items-end justify-center p-0 sm:items-center sm:p-4">
+  <div x-show="modalOpen" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+    x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+    @click="closeProduct()" class="absolute inset-0 bg-zinc-950/70 backdrop-blur-sm"></div>
+  <div x-show="modalOpen" x-transition:enter="transition ease-out duration-400" x-transition:enter-start="opacity-0 translate-y-8 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+    class="relative max-h-[95vh] w-full max-w-4xl overflow-y-auto rounded-t-3xl border border-zinc-200 bg-white shadow-2xl dark:border-white/10 dark:bg-ink-900 sm:max-h-[92vh] sm:rounded-3xl">
+    <template x-if="active">
+      <div>
+        <div class="relative">
+          <div class="relative aspect-[16/11] w-full sm:aspect-[16/8]" :style="'background-image: linear-gradient(135deg,' + active.g1 + ',' + active.g2 + ')'">
+            <span class="absolute inset-0 grid place-items-center text-[5rem] opacity-35 sm:text-[7rem]" x-text="active.emoji"></span>
+            <img :src="active.img" @error="$el.style.display='none'" :alt="active.name" class="relative h-full w-full object-cover" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/15 to-transparent"></div>
+          </div>
+          <button @click="closeProduct()" class="btn-press absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-black/55 text-white backdrop-blur hover:bg-rose-500 sm:right-4 sm:top-4 sm:h-10 sm:w-10"><i data-lucide="x" class="h-4 w-4"></i></button>
+          <div class="absolute left-3 top-3 flex flex-wrap gap-1.5 sm:left-4 sm:top-4 sm:gap-2">
+            <span class="rounded-full px-2.5 py-0.5 text-[9.5px] font-extrabold uppercase tracking-wider text-ink-950 sm:px-3 sm:py-1 sm:text-[10px]" :style="'background:' + active.badgeColor" x-text="active.badge"></span>
+          </div>
+          <div class="absolute inset-x-4 bottom-3 sm:inset-x-5 sm:bottom-4">
+            <p class="text-[9.5px] font-extrabold uppercase tracking-[0.18em] text-amber-300 sm:text-[10px]" x-text="active.brand + ' · ' + active.subcategory"></p>
+            <h2 class="mt-1 font-display text-lg font-extrabold text-white leading-tight sm:mt-1.5 sm:text-2xl lg:text-3xl" x-text="active.name"></h2>
+          </div>
+        </div>
+
+        <div class="grid gap-6 p-4 sm:gap-8 sm:p-6 lg:grid-cols-[1.25fr_1fr] lg:p-8">
+          <div>
+            <h3 class="text-[10px] font-extrabold uppercase tracking-[0.18em] text-zinc-500 sm:text-[11px]">Full specifications</h3>
+            <ul class="mt-3 grid grid-cols-1 gap-2 sm:mt-4 sm:grid-cols-2 sm:gap-2.5">
+              <template x-for="(s, idx) in active.specs" :key="idx">
+                <li class="flex items-start gap-2 rounded-xl border border-zinc-200/80 bg-zinc-50/70 px-3 py-2.5 text-[11.5px] font-semibold dark:border-white/[0.07] dark:bg-white/[0.03] sm:gap-2.5 sm:px-3.5 sm:py-3 sm:text-[12.5px]">
+                  <i data-lucide="check-circle-2" class="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-500 sm:h-4 sm:w-4"></i>
+                  <span x-text="s"></span>
+                </li>
+              </template>
+            </ul>
+            <div class="mt-4 rounded-2xl border border-cyan-400/25 bg-cyan-400/5 p-3.5 sm:mt-6 sm:p-4">
+              <div class="flex items-start gap-2.5 sm:gap-3">
+                <i data-lucide="shield-check" class="mt-0.5 h-4 w-4 shrink-0 text-cyan-500 sm:h-5 sm:w-5"></i>
+                <div class="text-[11.5px] leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-[12.5px]">
+                  <p class="font-extrabold text-zinc-900 dark:text-white">OC Gadgets Buyer Protection</p>
+                  <p class="mt-1">6-month warranty · 7-day returns · verified seller · free vehicle inspection.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="lg:sticky lg:top-2 lg:self-start">
+            <div class="rounded-2xl border border-zinc-200 bg-zinc-50/80 p-4 dark:border-white/[0.08] dark:bg-white/[0.03] sm:p-5">
+              <p class="text-[10px] font-extrabold uppercase tracking-wider text-zinc-500 sm:text-[11px]">Price</p>
+              <div class="mt-1.5 flex items-end gap-2 sm:mt-2 sm:gap-3">
+                <p class="font-display text-2xl font-extrabold sm:text-3xl" x-text="money(active.price)"></p>
+                <p class="pb-0.5 text-[12px] font-bold text-zinc-400 line-through sm:pb-1 sm:text-sm" x-show="active.oldPrice > 0" x-text="active.oldPrice ? money(active.oldPrice) : ''"></p>
+              </div>
+
+              <div class="mt-4 flex items-center justify-between rounded-xl border border-zinc-200 bg-white px-3 py-2.5 dark:border-white/10 dark:bg-white/[0.04] sm:mt-5">
+                <span class="text-[11.5px] font-bold text-zinc-500 sm:text-[12px]">Quantity</span>
+                <div class="flex items-center gap-1">
+                  <button @click="modalQty = Math.max(1, modalQty - 1)" class="grid h-8 w-8 place-items-center rounded-lg text-zinc-500 hover:bg-zinc-100 dark:hover:bg-white/8"><i data-lucide="minus" class="h-3.5 w-3.5"></i></button>
+                  <span class="w-8 text-center text-[13px] font-extrabold sm:w-9 sm:text-sm" x-text="modalQty"></span>
+                  <button @click="modalQty++" class="grid h-8 w-8 place-items-center rounded-lg text-zinc-500 hover:bg-zinc-100 dark:hover:bg-white/8"><i data-lucide="plus" class="h-3.5 w-3.5"></i></button>
+                </div>
+              </div>
+
+              <div class="mt-3.5 space-y-2.5 sm:mt-4">
+                <button @click="productWhatsApp(active, modalQty)" class="btn-press flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 px-4 py-3.5 text-[13px] font-extrabold text-white shadow-lg shadow-emerald-500/25 sm:text-sm">
+                  <i data-lucide="message-circle" class="h-4 w-4"></i> Order on WhatsApp
+                </button>
+                <button @click="addToCart(active, modalQty); closeProduct()" class="btn-press flex w-full items-center justify-center gap-2 rounded-xl bg-zinc-900 px-4 py-3.5 text-[13px] font-extrabold text-white hover:bg-amber-400 hover:text-ink-950 dark:bg-white dark:text-ink-950 sm:text-sm">
+                  <i data-lucide="plus" class="h-4 w-4"></i> Add to cart
+                </button>
+              </div>
+
+              <div class="mt-4 space-y-2.5 border-t border-zinc-200 pt-4 dark:border-white/[0.08] sm:mt-5 sm:space-y-3 sm:pt-5">
+                <div class="flex items-center gap-2.5 text-[11.5px] font-semibold text-zinc-500 sm:text-[12px]">
+                  <i data-lucide="truck" class="h-4 w-4 shrink-0 text-cyan-500"></i> Lagos delivery in 24–48h
+                </div>
+                <div class="flex items-center gap-2.5 text-[11.5px] font-semibold text-zinc-500 sm:text-[12px]">
+                  <i data-lucide="credit-card" class="h-4 w-4 shrink-0 text-oc-blue"></i> Pay with Paystack
+                </div>
+                <div class="flex items-center gap-2.5 text-[11.5px] font-semibold text-zinc-500 sm:text-[12px]">
+                  <i data-lucide="rotate-ccw" class="h-4 w-4 shrink-0 text-amber-500"></i> 7-day return window
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+  </div>
+</div>
+
+<!-- SERVICE BOOKING MODAL -->
+<div x-show="serviceModalOpen" x-cloak class="fixed inset-0 z-[85] flex items-end justify-center p-0 sm:items-center sm:p-4">
+  <div x-show="serviceModalOpen" x-transition:enter="transition ease-out duration-250" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+    x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+    @click="serviceModalOpen = false" class="absolute inset-0 bg-zinc-950/70 backdrop-blur-sm"></div>
+  <div x-show="serviceModalOpen" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-8 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+    class="relative w-full max-w-lg overflow-hidden rounded-t-3xl border border-zinc-200 bg-white shadow-2xl dark:border-white/10 dark:bg-ink-900 sm:rounded-3xl">
+    <template x-if="activeService">
+      <div>
+        <div class="relative overflow-hidden px-5 py-5 sm:px-6 sm:py-6"
+          :class="activeService === 'repair' ? 'bg-gradient-to-br from-oc-blue to-oc-blue/70' : 'bg-gradient-to-br from-oc-green to-oc-green/70'">
+          <button @click="serviceModalOpen = false" class="absolute right-3.5 top-3.5 grid h-8 w-8 place-items-center rounded-lg text-white/80 hover:bg-white/10 sm:right-4 sm:top-4"><i data-lucide="x" class="h-4 w-4"></i></button>
+          <div class="flex items-center gap-3">
+            <span class="grid h-11 w-11 place-items-center rounded-2xl bg-white text-ink-950 sm:h-12 sm:w-12">
+              <i :data-lucide="activeService === 'repair' ? 'wrench' : 'cloud-download'" class="h-5 w-5 sm:h-6 sm:w-6"></i>
+            </span>
+            <div>
+              <p class="text-[10px] font-extrabold uppercase tracking-wider text-white/80 sm:text-[11px]">OC Gadgets Service</p>
+              <h3 class="font-display text-base font-extrabold text-white sm:text-lg" x-text="activeService === 'repair' ? 'Book a Phone Repair' : 'Request Game Download'"></h3>
+            </div>
+          </div>
+        </div>
+        <div class="safe-bottom-lg p-4 sm:p-6">
+          <form @submit.prevent="submitServiceRequest()" class="space-y-3 sm:space-y-4">
+            <input type="text" x-model="serviceForm.name" placeholder="Your name *" class="field w-full rounded-xl border border-zinc-200 bg-white px-3.5 py-3 text-[14px] font-medium dark:border-white/10 dark:bg-white/[0.04] sm:px-4 sm:text-sm" />
+            <input type="tel" x-model="serviceForm.phone" placeholder="Your WhatsApp number *" class="field w-full rounded-xl border border-zinc-200 bg-white px-3.5 py-3 text-[14px] font-medium dark:border-white/10 dark:bg-white/[0.04] sm:px-4 sm:text-sm" />
+            <input type="text" x-model="serviceForm.model"
+              :placeholder="activeService === 'repair' ? 'Device model + issue *' : 'Game title + console *'"
+              class="field w-full rounded-xl border border-zinc-200 bg-white px-3.5 py-3 text-[14px] font-medium dark:border-white/10 dark:bg-white/[0.04] sm:px-4 sm:text-sm" />
+            <textarea x-model="serviceForm.notes" rows="2" placeholder="Notes (optional)" class="field w-full resize-none rounded-xl border border-zinc-200 bg-white px-3.5 py-3 text-[14px] font-medium dark:border-white/10 dark:bg-white/[0.04] sm:px-4 sm:text-sm"></textarea>
+            <button type="submit" class="btn-press flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3.5 text-[13px] font-extrabold text-white shadow-lg sm:text-sm"
+              :class="activeService === 'repair' ? 'bg-oc-blue shadow-oc-blue/30' : 'bg-oc-green shadow-oc-green/30'">
+              <i data-lucide="send" class="h-4 w-4"></i> Send request on WhatsApp
+            </button>
+          </form>
+        </div>
+      </div>
+    </template>
+  </div>
+</div>
+
+<!-- CHAT -->
+<div class="fixed right-3 z-[65] flex flex-col items-end gap-3 safe-chat sm:right-5 sm:bottom-5">
+  <div x-show="chatOpen" x-cloak x-transition:enter="transition ease-out duration-350" x-transition:enter-start="opacity-0 translate-y-6 scale-90" x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+    x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 scale-100" x-transition:leave-end="opacity-0 translate-y-6 scale-90"
+    class="flex h-[70vh] max-h-[32rem] w-[calc(100vw-1.5rem)] max-w-[24rem] flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-2xl dark:border-white/10 dark:bg-ink-900 sm:h-[32rem] sm:w-[calc(100vw-2.5rem)] sm:rounded-3xl"
+    style="transform-origin: bottom right;">
+    <div class="relative overflow-hidden bg-gradient-to-r from-ink-800 to-ink-950 px-3.5 py-3.5 sm:px-4 sm:py-4">
+      <div class="relative flex items-center gap-2.5 sm:gap-3">
+        <span class="relative grid h-9 w-9 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-amber-400 to-cyan-400 text-ink-950 sm:h-10 sm:w-10">
+          <i data-lucide="bot" class="h-4 w-4 sm:h-5 sm:w-5"></i>
+          <span class="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-ink-900 bg-emerald-400 sm:h-3.5 sm:w-3.5"></span>
+        </span>
+        <div class="flex-1 min-w-0">
+          <h3 class="font-display text-[13px] font-extrabold text-white sm:text-sm">OC Assistant</h3>
+          <p class="mt-0.5 flex items-center gap-1.5 text-[10px] font-semibold text-emerald-400 sm:text-[11px]">
+            <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span> Online · Replies instantly
+          </p>
+        </div>
+        <button @click="chatOpen = false" class="grid h-7 w-7 place-items-center rounded-lg text-white/70 hover:bg-white/10 sm:h-8 sm:w-8"><i data-lucide="x" class="h-4 w-4"></i></button>
+      </div>
+    </div>
+    <div x-ref="chatBody" class="chat-scroll flex-1 space-y-2.5 overflow-y-auto bg-zinc-50 px-3 py-3 dark:bg-ink-950/60 sm:space-y-3 sm:px-4 sm:py-4">
+      <template x-for="(m, idx) in chatMessages" :key="idx">
+        <div class="flex" :class="m.role === 'user' ? 'justify-end' : 'justify-start'">
+          <div class="max-w-[88%]">
+            <div class="animate-popIn rounded-2xl px-3 py-2 text-[12px] font-medium leading-relaxed shadow-sm sm:px-3.5 sm:py-2.5 sm:text-[12.5px]"
+              :class="m.role === 'user' ? 'rounded-br-md bg-gradient-to-br from-amber-400 to-amber-500 text-ink-950' : 'rounded-bl-md border border-zinc-200 bg-white text-zinc-700 dark:border-white/10 dark:bg-ink-800 dark:text-zinc-200'">
+              <p class="whitespace-pre-line" x-text="m.text"></p>
+              <template x-if="m.human">
+                <a :href="waLink(m.humanPayload)" target="_blank" rel="noopener"
+                  class="btn-press mt-2.5 flex items-center justify-center gap-2 rounded-xl bg-emerald-500 px-3 py-2 text-[11px] font-extrabold text-white hover:bg-emerald-600 sm:mt-3 sm:px-3.5 sm:py-2.5 sm:text-[11.5px]">
+                  <i data-lucide="message-circle" class="h-3.5 w-3.5"></i> Talk to a human
+                </a>
+              </template>
+            </div>
+            <p class="mt-0.5 px-1 text-[9.5px] font-semibold text-zinc-400 sm:mt-1 sm:text-[10px]" :class="m.role === 'user' ? 'text-right' : ''" x-text="m.time"></p>
+          </div>
+        </div>
+      </template>
+      <div x-show="chatTyping" class="flex justify-start">
+        <div class="flex items-center gap-1 rounded-2xl rounded-bl-md border border-zinc-200 bg-white px-3.5 py-2.5 dark:border-white/10 dark:bg-ink-800 sm:px-4 sm:py-3">
+          <span class="typing-dot h-1.5 w-1.5 rounded-full bg-zinc-400"></span>
+          <span class="typing-dot h-1.5 w-1.5 rounded-full bg-zinc-400"></span>
+          <span class="typing-dot h-1.5 w-1.5 rounded-full bg-zinc-400"></span>
+        </div>
+      </div>
+    </div>
+    <div class="no-scrollbar flex gap-1.5 overflow-x-auto border-t border-zinc-200 bg-white px-2.5 py-2 dark:border-white/[0.08] dark:bg-ink-900 sm:gap-2 sm:px-3 sm:py-2.5">
+      <template x-for="qr in quickReplies" :key="qr.label">
+        <button @click="sendChat(qr.text)" class="pill shrink-0 rounded-full border border-zinc-200 bg-zinc-50 px-2.5 py-1.5 text-[10.5px] font-bold text-zinc-600 hover:border-amber-400/70 hover:text-amber-600 dark:border-white/10 dark:bg-white/5 dark:text-zinc-300 sm:px-3 sm:text-[11px]"
+          x-text="qr.label"></button>
+      </template>
+    </div>
+    <div class="border-t border-zinc-200 bg-white p-2.5 dark:border-white/[0.08] dark:bg-ink-900 sm:p-3">
+      <form @submit.prevent="sendChat()" class="flex items-center gap-2">
+        <input type="text" x-model="chatInput" placeholder="Ask about price, delivery…"
+          class="field flex-1 rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-2.5 text-[14px] font-medium dark:border-white/10 dark:bg-white/[0.05] sm:px-3.5 sm:text-[12.5px]" />
+        <button type="submit" :disabled="!chatInput.trim()"
+          class="btn-press grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-amber-400 to-amber-500 text-ink-950 shadow-lg shadow-amber-500/25 disabled:opacity-40 sm:h-10 sm:w-10">
+          <i data-lucide="send-horizontal" class="h-4 w-4"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <button @click="toggleChat()" class="btn-press group relative grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-amber-400 via-amber-500 to-cyan-400 text-ink-950 shadow-2xl shadow-amber-500/35 sm:h-14 sm:w-14">
+    <span x-show="!chatOpen"><i data-lucide="message-square-dots" class="h-5 w-5 sm:h-6 sm:w-6"></i></span>
+    <span x-show="chatOpen" x-cloak><i data-lucide="chevron-down" class="h-5 w-5 sm:h-6 sm:w-6"></i></span>
+    <span x-show="!chatOpen" class="absolute -right-0.5 -top-0.5 grid h-4 min-w-[16px] place-items-center rounded-full bg-rose-500 px-1 text-[9px] font-extrabold text-white ring-2 ring-white dark:ring-ink-950 sm:-right-1 sm:-top-1 sm:h-5 sm:min-w-[20px] sm:text-[10px]">1</span>
+    <span x-show="!chatOpen" class="pointer-events-none absolute inset-0 animate-ping rounded-2xl bg-amber-400/40"></span>
+  </button>
+</div>
+
+<!-- SCRIPTS -->
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script>
+  let iconTimer = null;
+  window.refreshIcons = function () {
+    if (window.lucide && typeof window.lucide.createIcons === 'function') {
+      try { window.lucide.createIcons(); } catch (e) {}
+    }
+  };
+  function scheduleIconRefresh() {
+    clearTimeout(iconTimer);
+    iconTimer = setTimeout(window.refreshIcons, 60);
+  }
+
+  const DEFAULT_PRODUCTS = [
+    { id:1, name:'iPhone 15 Pro Max 256GB', brand:'Apple', category:'phones', subcategory:'Smartphone', price:1850000, oldPrice:1980000, condition:'Brand New', rating:4.9, reviews:128, badge:'Hot Deal', badgeColor:'#fbbf24', emoji:'📱', featured:true, stock:7, img:'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=900&q=70', g1:'#3f3f46', g2:'#18181b', specs:['6.7" Super Retina XDR ProMotion','A17 Pro chip · 8GB RAM','Grade-5 Titanium frame','48MP ProRAW main camera','USB-C · 5G · Face ID','Battery health 100%'] },
+    { id:2, name:'iPhone 13 Pro 128GB', brand:'Apple', category:'phones', subcategory:'Smartphone', price:780000, oldPrice:895000, condition:'Pre-owned · Excellent', rating:4.7, reviews:84, badge:'Verified', badgeColor:'#22d3ee', emoji:'📱', featured:false, stock:3, img:'https://images.unsplash.com/photo-1632661674596-df8be070a5c5?auto=format&fit=crop&w=900&q=70', g1:'#52525b', g2:'#27272a', specs:['6.1" Super Retina XDR','A15 Bionic · 6GB RAM','ProMotion 120Hz','Battery health 91%','Face ID · 5G','Original box + cable'] },
+    { id:3, name:'Samsung Galaxy S24 Ultra 512GB', brand:'Samsung', category:'phones', subcategory:'Smartphone', price:1420000, oldPrice:1560000, condition:'Brand New', rating:4.8, reviews:96, badge:'New Arrival', badgeColor:'#a78bfa', emoji:'📱', featured:false, stock:6, img:'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=900&q=70', g1:'#312e81', g2:'#1e1b4b', specs:['6.8" QHD+ AMOLED 2X','Snapdragon 8 Gen 3','200MP quad camera','S Pen included','5000mAh · 45W charge','Titanium Gray'] },
+    { id:4, name:'Google Pixel 8 Pro 256GB', brand:'Google', category:'phones', subcategory:'Smartphone', price:1050000, oldPrice:0, condition:'Brand New', rating:4.6, reviews:47, badge:'Editor’s Pick', badgeColor:'#34d399', emoji:'📱', featured:false, stock:4, img:'https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=900&q=70', g1:'#065f46', g2:'#022c22', specs:['6.7" LTPO OLED 120Hz','Google Tensor G3','50MP + 48MP + 48MP','7 years OS updates','Best-in-class AI photo','IP68 water resistance'] },
+    { id:5, name:'iPad Air 5 (M1) 64GB Wi-Fi', brand:'Apple', category:'phones', subcategory:'Tablet', price:720000, oldPrice:810000, condition:'Brand New', rating:4.8, reviews:61, badge:'Bundle', badgeColor:'#fbbf24', emoji:'📲', featured:false, stock:5, img:'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?auto=format&fit=crop&w=900&q=70', g1:'#334155', g2:'#0f172a', specs:['10.9" Liquid Retina','Apple M1 chip','Touch ID · USB-C','12MP front + rear','Apple Pencil 2 ready','Free tempered glass'] },
+    { id:6, name:'Samsung Galaxy A55 5G 256GB', brand:'Samsung', category:'phones', subcategory:'Smartphone', price:465000, oldPrice:520000, condition:'Brand New', rating:4.5, reviews:72, badge:'Budget King', badgeColor:'#22d3ee', emoji:'📱', featured:false, stock:12, img:'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=900&q=70', g1:'#0e7490', g2:'#164e63', specs:['6.6" Super AMOLED 120Hz','Exynos 1480','50MP OIS main camera','5000mAh · 25W','IP67 rated','4 years OS updates'] },
+    { id:7, name:'Toyota Camry 2019 XSE', brand:'Toyota', category:'cars', subcategory:'Sedan · Petrol', price:18500000, oldPrice:20500000, condition:'Pre-owned · Certified', rating:4.9, reviews:23, badge:'Certified', badgeColor:'#fbbf24', emoji:'🚘', featured:true, stock:2, img:'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?auto=format&fit=crop&w=900&q=70', g1:'#1e293b', g2:'#0f172a', specs:['2.5L 4-cylinder · 203hp','Automatic · FWD','68,400 km mileage','Full service history','Reverse camera','Fresh Lagos reg'] },
+    { id:8, name:'Lexus RX 350 2017 F-Sport', brand:'Lexus', category:'cars', subcategory:'SUV · Petrol', price:32000000, oldPrice:0, condition:'Pre-owned · Certified', rating:4.8, reviews:17, badge:'Luxury', badgeColor:'#a78bfa', emoji:'🚙', featured:false, stock:1, img:'https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=900&q=70', g1:'#3b0764', g2:'#1e1b4b', specs:['3.5L V6 · 295hp','AWD · 8-speed','92,100 km mileage','Panoramic sunroof','Full leather','Accident-free verified'] },
+    { id:9, name:'Honda Accord 2020 Sport', brand:'Honda', category:'cars', subcategory:'Sedan · Petrol', price:21000000, oldPrice:22500000, condition:'Pre-owned · Certified', rating:4.7, reviews:14, badge:'Just In', badgeColor:'#34d399', emoji:'🚗', featured:false, stock:2, img:'https://images.unsplash.com/photo-1590362891991-f776e747a588?auto=format&fit=crop&w=900&q=70', g1:'#0f766e', g2:'#134e4a', specs:['1.5L Turbo · 192hp','CVT automatic · FWD','54,700 km mileage','CarPlay + Auto','Lane-keep assist','New tyres'] },
+    { id:10, name:'Mercedes-Benz GLE 450 2021', brand:'Mercedes-Benz', category:'cars', subcategory:'SUV · Petrol', price:78000000, oldPrice:84000000, condition:'Pre-owned · Certified', rating:5.0, reviews:9, badge:'Flagship', badgeColor:'#fbbf24', emoji:'🚙', featured:false, stock:1, img:'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=900&q=70', g1:'#1c1917', g2:'#0c0a09', specs:['3.0L Inline-6 · 362hp','4MATIC AWD','38,900 km mileage','MBUX dual 12.3"','Burmester audio','Full option · duty paid'] },
+    { id:11, name:'Toyota Corolla 2018 LE', brand:'Toyota', category:'cars', subcategory:'Sedan · Petrol', price:14200000, oldPrice:0, condition:'Pre-owned · Certified', rating:4.6, reviews:31, badge:'Best Value', badgeColor:'#22d3ee', emoji:'🚗', featured:false, stock:3, img:'https://images.unsplash.com/photo-1550355291-bbee04a92027?auto=format&fit=crop&w=900&q=70', g1:'#1f2937', g2:'#111827', specs:['1.8L 4-cyl · 132hp','CVT automatic · FWD','81,200 km mileage','Ice-cold AC','Bluetooth + reverse','Perfect first car'] },
+    { id:12, name:'PlayStation 5 Slim Disc Edition', brand:'Sony', category:'gaming', subcategory:'Console', price:890000, oldPrice:960000, condition:'Brand New', rating:4.9, reviews:156, badge:'Best Seller', badgeColor:'#fbbf24', emoji:'🎮', featured:false, stock:8, img:'https://images.unsplash.com/photo-1606813907291-d86efa9b94db?auto=format&fit=crop&w=900&q=70', g1:'#1e40af', g2:'#0f172a', specs:['1TB SSD storage','4K Blu-ray drive','Up to 120fps · 8K','1 DualSense included','12-month warranty','Region-free'] },
+    { id:13, name:'PS5 DualSense Wireless Controller', brand:'Sony', category:'gaming', subcategory:'Accessory', price:95000, oldPrice:115000, condition:'Brand New', rating:4.8, reviews:203, badge:'Accessory', badgeColor:'#22d3ee', emoji:'🕹️', featured:false, stock:24, img:'https://images.unsplash.com/photo-1600080972464-8e5f35f63d08?auto=format&fit=crop&w=900&q=70', g1:'#334155', g2:'#0f172a', specs:['Haptic feedback','Adaptive triggers','Built-in mic','USB-C charging','12h battery','Genuine Sony'] },
+    { id:14, name:'PS5 Digital Edition + 2 DualSense', brand:'Sony', category:'gaming', subcategory:'Bundle', price:820000, oldPrice:940000, condition:'Brand New', rating:4.7, reviews:68, badge:'Bundle', badgeColor:'#34d399', emoji:'🎮', featured:false, stock:4, img:'https://images.unsplash.com/photo-1607853202273-797f1c22a38e?auto=format&fit=crop&w=900&q=70', g1:'#1e3a8a', g2:'#111827', specs:['825GB SSD all-digital','2 controllers','Perfect for FC 25 nights','12-month warranty','Free Lagos delivery','Region-free PSN'] },
+    { id:15, name:'EA Sports FC 25 — PS5', brand:'EA Sports', category:'gaming', subcategory:'Game', price:78000, oldPrice:92000, condition:'Brand New', rating:4.5, reviews:119, badge:'Trending', badgeColor:'#fbbf24', emoji:'⚽', featured:false, stock:30, img:'https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?auto=format&fit=crop&w=900&q=70', g1:'#166534', g2:'#052e16', specs:['Physical disc · PS5','Ultimate Team + Career','Sealed in case','English/French audio','Multiplayer ready','Same-day dispatch'] },
+    { id:16, name:'Meta Quest 3 128GB VR Headset', brand:'Meta', category:'gaming', subcategory:'VR', price:780000, oldPrice:0, condition:'Brand New', rating:4.6, reviews:34, badge:'New Tech', badgeColor:'#a78bfa', emoji:'🥽', featured:false, stock:5, img:'https://images.unsplash.com/photo-1622979135225-d2ba269cf1ac?auto=format&fit=crop&w=900&q=70', g1:'#4c1d95', g2:'#1e1b4b', specs:['Mixed reality','Snapdragon XR2 Gen 2','4K+ Infinite Display','Touch Plus controllers','All-in-one no PC','6-month warranty'] },
+    { id:17, name:'Apple AirPods Pro 2 (USB-C)', brand:'Apple', category:'accessories', subcategory:'Audio', price:215000, oldPrice:245000, condition:'Brand New', rating:4.9, reviews:187, badge:'Top Rated', badgeColor:'#fbbf24', emoji:'🎧', featured:false, stock:18, img:'https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?auto=format&fit=crop&w=900&q=70', g1:'#3f3f46', g2:'#18181b', specs:['Active Noise Cancellation','Adaptive Transparency','30h with case','USB-C MagSafe case','Spatial Audio','Sealed · Apple warranty'] },
+    { id:18, name:'Apple Watch Series 9 45mm GPS', brand:'Apple', category:'accessories', subcategory:'Wearable', price:420000, oldPrice:465000, condition:'Brand New', rating:4.8, reviews:92, badge:'Popular', badgeColor:'#22d3ee', emoji:'⌚', featured:false, stock:9, img:'https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=900&q=70', g1:'#1f2937', g2:'#0b1220', specs:['45mm Always-On','S9 SiP double-tap','Blood oxygen + ECG','Crash detection','Aluminium Midnight','Sport band included'] },
+    { id:19, name:'JBL Flip 6 Portable Speaker', brand:'JBL', category:'accessories', subcategory:'Audio', price:135000, oldPrice:155000, condition:'Brand New', rating:4.7, reviews:141, badge:'Party Pick', badgeColor:'#fbbf24', emoji:'🔊', featured:false, stock:15, img:'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&w=900&q=70', g1:'#7c2d12', g2:'#1c1917', specs:['2-way speaker','12h playtime','IP67 waterproof','Bluetooth 5.1','PartyBoost pairing','Original JBL box'] },
+    { id:20, name:'Anker 20,000mAh Power Bank 65W', brand:'Anker', category:'accessories', subcategory:'Power', price:48000, oldPrice:58000, condition:'Brand New', rating:4.6, reviews:164, badge:'Essentials', badgeColor:'#34d399', emoji:'🔋', featured:false, stock:40, img:'https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?auto=format&fit=crop&w=900&q=70', g1:'#0f766e', g2:'#052e2b', specs:['20,000mAh capacity','65W USB-C PD','Charges laptops','Dual ports','LED indicator','18-month warranty'] },
+  ];
+
+  function app() {
+    return {
+      dark: true,
+      toggleTheme() {
+        this.dark = !this.dark;
+        document.documentElement.classList.toggle('dark', this.dark);
+        try { localStorage.setItem('bfo-theme', this.dark ? 'dark' : 'light'); } catch (e) {}
+        this.toast(this.dark ? 'Dark mode enabled' : 'Light mode enabled', 'info');
+      },
+
+      toasts: [],
+      toast(message, type) {
+        type = type || 'success';
+        const id = Date.now() + Math.random();
+        this.toasts.push({ id, message, type });
+        setTimeout(() => { this.toasts = this.toasts.filter(t => t.id !== id); }, 3800);
+      },
+
+      mobileNav: false,
+      whatsapp: '2347038573480',
+      shippingThreshold: 500000,
+      deliveryFee: 15000,
+      priceCeiling: 80000000,
+
+      services: {
+        repair: { label:'Phone Repair', price:15000, priceLabel:'Starting from', color:'blue', icon:'wrench', subtitle:'Fast · Reliable · Trusted', description:'Cracked screen? Water damage? Dead battery? Our certified technicians fix all major brands.', features:['Screen replacement (iPhone, Samsung, Google)','Battery replacement + charging port','Water damage & software flashing','Free diagnosis · 30-day warranty'], ctaLabel:'Book repair', ctaAction:'repair' },
+        gameselling: { label:'Game Selling', price:45000, priceLabel:'Games from', color:'purple', icon:'gamepad-2', subtitle:'Latest · Best Prices', description:'Physical discs and digital codes for PS5, PS4 and Xbox — stocked fresh every week.', features:['EA FC 25, COD MW, GTA V, Spider-Man','New releases within 48 hours','Trade old games for credit or cash','Pre-orders open'], ctaLabel:'Browse games', ctaAction:'category:gaming' },
+        download: { label:'Game Downloading', price:5000, priceLabel:'Per game', color:'green', icon:'cloud-download', subtitle:'100% Working', description:'Need a game fast? We handle the download — fully set up, tested, and ready to play.', features:['Any PS5/PS4 game downloaded','Fast fibre · no size limits','Tested & verified before you leave','Walk-in or bring your console'], ctaLabel:'Request', ctaAction:'download' },
+      },
+
+      PAYSTACK_PUBLIC_KEY: 'pk_test_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+      payModalOpen: false,
+      payEmail: '',
+      paying: false,
+
+      categories: [
+        { id:'all', label:'All Items', icon:'layout-grid' },
+        { id:'phones', label:'Phones & Tablets', icon:'smartphone' },
+        { id:'cars', label:'Cars & Auto', icon:'car' },
+        { id:'gaming', label:'PS & Gaming', icon:'gamepad-2' },
+        { id:'accessories', label:'Accessories', icon:'headphones' },
+      ],
+
+      products: [],
+      search: '', activeCategory: 'all', sortBy: 'featured', maxPrice: 80000000,
+
+      get filtered() {
+        let list = this.products.filter(p => this.activeCategory === 'all' || p.category === this.activeCategory);
+        const q = this.search.trim().toLowerCase();
+        if (q) list = list.filter(p => [p.name, p.brand, p.category, p.subcategory, p.condition, p.specs.join(' ')].join(' ').toLowerCase().indexOf(q) !== -1);
+        list = list.filter(p => p.price <= this.maxPrice);
+        if (this.sortBy === 'low') list = list.slice().sort((a,b) => a.price - b.price);
+        else if (this.sortBy === 'high') list = list.slice().sort((a,b) => b.price - a.price);
+        else if (this.sortBy === 'rating') list = list.slice().sort((a,b) => b.rating - a.rating);
+        else if (this.sortBy === 'name') list = list.slice().sort((a,b) => a.name.localeCompare(b.name));
+        else list = list.slice().sort((a,b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+        return list;
+      },
+
+      resetFilters() {
+        this.search = ''; this.activeCategory = 'all'; this.sortBy = 'featured'; this.maxPrice = this.priceCeiling;
+        this.toast('Filters reset', 'info');
+      },
+
+      wishlist: [],
+      toggleWish(p) {
+        if (this.wishlist.includes(p.id)) { this.wishlist = this.wishlist.filter(id => id !== p.id); this.toast('Removed', 'info'); }
+        else { this.wishlist.push(p.id); this.toast('Saved ❤️', 'success'); }
+      },
+
+      cart: [], cartOpen: false,
+      get cartCount() { return this.cart.reduce((s,i) => s + i.qty, 0); },
+      get cartTotal() { return this.cart.reduce((s,i) => s + i.price * i.qty, 0); },
+      get shippingLeft() { return Math.max(0, this.shippingThreshold - this.cartTotal); },
+      get shippingPct() { return Math.min(100, (this.cartTotal / this.shippingThreshold) * 100); },
+      get grandTotal() { return this.cartTotal + (this.shippingLeft <= 0 ? 0 : this.deliveryFee); },
+
+      addToCart(product, qty) {
+        qty = qty || 1;
+        const existing = this.cart.find(i => i.id === product.id);
+        if (existing) existing.qty += qty;
+        else this.cart.push({ id:product.id, name:product.name, price:product.price, condition:product.condition, img:product.img, emoji:product.emoji, g1:product.g1, g2:product.g2, qty });
+        this.toast(product.name + ' added', 'success');
+        this.cartOpen = true;
+      },
+      inc(item) { item.qty += 1; },
+      dec(item) { if (item.qty > 1) item.qty -= 1; else this.removeItem(item.id); },
+      removeItem(id) { this.cart = this.cart.filter(i => i.id !== id); this.toast('Removed', 'info'); },
+      clearCart() { this.cart = []; this.toast('Cart cleared', 'info'); },
+
+      openPaymentChooser() {
+        if (this.cart.length === 0) { this.toast('Cart is empty', 'error'); return; }
+        this.payModalOpen = true;
+        this.$nextTick(() => scheduleIconRefresh());
+      },
+
+      payWithPaystack() {
+        if (!this.payEmail || this.payEmail.indexOf('@') === -1) { this.toast('Enter a valid email', 'error'); return; }
+        if (typeof PaystackPop === 'undefined') { this.toast('Paystack loading…', 'error'); return; }
+        if (this.PAYSTACK_PUBLIC_KEY.indexOf('xxxxx') !== -1) { this.toast('Add your Paystack public key first', 'error'); return; }
+
+        this.paying = true;
+        const self = this;
+        const reference = 'BFO-' + Date.now() + '-' + Math.floor(Math.random() * 1000000);
+
+        try {
+          const handler = PaystackPop.setup({
+            key: this.PAYSTACK_PUBLIC_KEY,
+            email: this.payEmail,
+            amount: Math.round(this.grandTotal * 100),
+            currency: 'NGN',
+            ref: reference,
+            metadata: { custom_fields: [
+              { display_name:'Business', variable_name:'business', value:'OC Gadgets (BuyFromOc)' },
+              { display_name:'Items', variable_name:'items', value: this.cart.map(i => i.name + ' × ' + i.qty).join(', ') },
+            ]},
+            callback: function (response) { self.paying = false; self.onPaystackSuccess(response); },
+            onClose: function () { self.paying = false; self.toast('Payment closed', 'info'); },
+          });
+          handler.openIframe();
+        } catch (err) { this.paying = false; this.toast('Could not open Paystack', 'error'); }
+      },
+
+      onPaystackSuccess(response) {
+        const ref = response.reference || '';
+        const lines = this.cart.map(i => '• ' + i.name + ' × ' + i.qty + ' — ' + this.money(i.price * i.qty)).join('\n');
+        const msg = 'Hello OC Gadgets 👋\n\n✅ *Payment received on BuyFromOc*\n\nPaystack ref: *' + ref + '*\nEmail: ' + this.payEmail + '\nAmount paid: *' + this.money(this.grandTotal) + '*\n\n*Items:*\n' + lines + '\n\nPlease confirm my order.\n\nName:\nAddress:\nPreferred delivery date:';
+        window.open(this.waLink(msg), '_blank');
+        this.payModalOpen = false;
+        this.cartOpen = false;
+        this.toast('Payment successful! Ref: ' + ref, 'success');
+        this.cart = [];
+        this.payEmail = '';
+      },
+
+      checkoutWhatsApp() {
+        if (this.cart.length === 0) { this.toast('Cart is empty', 'error'); return; }
+        const lines = this.cart.map(i => '• ' + i.name + ' × ' + i.qty + ' — ' + this.money(i.price * i.qty)).join('\n');
+        const msg = 'Hello OC Gadgets 👋\n\nI would like to place an order from *BuyFromOc*:\n\n' + lines + '\n\nSubtotal: ' + this.money(this.cartTotal) + '\nDelivery: ' + (this.shippingLeft <= 0 ? 'FREE' : this.money(this.deliveryFee)) + '\n*Total: ' + this.money(this.grandTotal) + '*\n\n---\nName:\nAddress:\nPreferred payment:\nPreferred delivery date:\n\nPlease confirm. Thank you!';
+        window.open(this.waLink(msg), '_blank');
+        this.toast('Opening WhatsApp…', 'success');
+      },
+
+      modalOpen: false, active: null, modalQty: 1,
+      openProduct(p) { this.active = p; this.modalQty = 1; this.modalOpen = true; document.body.style.overflow = 'hidden'; scheduleIconRefresh(); },
+      closeProduct() { this.modalOpen = false; document.body.style.overflow = ''; },
+
+      productWhatsApp(p, qty) {
+        const msg = 'Hello OC Gadgets 👋\n\nI am interested in this item on *BuyFromOc*:\n\n*Product:* ' + p.name + '\n*Price:* ' + this.money(p.price) + '\n*Quantity:* ' + qty + '\n*Condition:* ' + p.condition + '\n*Brand:* ' + p.brand + '\n\nIs it still available? Can we discuss the price?\n\nMy name is: ';
+        window.open(this.waLink(msg), '_blank');
+        this.toast('Opening WhatsApp…', 'success');
+      },
+
+      serviceModalOpen: false, activeService: null,
+      serviceForm: { name:'', phone:'', model:'', notes:'' },
+      openService(type) { this.activeService = type; this.serviceForm = { name:'', phone:'', model:'', notes:'' }; this.serviceModalOpen = true; this.$nextTick(() => scheduleIconRefresh()); },
+      handleServiceCTA(svc) {
+        if (svc.ctaAction === 'repair') this.openService('repair');
+        else if (svc.ctaAction === 'download') this.openService('download');
+        else if (svc.ctaAction && svc.ctaAction.indexOf('category:') === 0) {
+          this.activeCategory = svc.ctaAction.split(':')[1];
+          document.getElementById('catalog').scrollIntoView({ behavior: 'smooth' });
+        }
+      },
+      submitServiceRequest() {
+        const t = this.serviceForm;
+        if (!t.name.trim() || !t.phone.trim() || !t.model.trim()) { this.toast('Please fill name, WhatsApp and details', 'error'); return; }
+        const svcName = this.activeService === 'repair' ? 'PHONE REPAIR BOOKING' : 'GAME DOWNLOAD REQUEST';
+        const msg = 'Hello OC Gadgets 👋\n\n*NEW ' + svcName + '*\n(via BuyFromOc)\n\nName: ' + t.name + '\nWhatsApp: ' + t.phone + '\n' + (this.activeService === 'repair' ? 'Device + Issue: ' : 'Game + Console: ') + t.model + '\nNotes: ' + (t.notes || '—') + '\n\nPlease confirm availability, pricing and time slot. Thank you!';
+        window.open(this.waLink(msg), '_blank');
+        this.toast('Opening WhatsApp…', 'success');
+        this.serviceForm = { name:'', phone:'', model:'', notes:'' };
+        this.serviceModalOpen = false;
+      },
+
+      chatOpen: false, chatInput: '', chatTyping: false, chatMessages: [],
+      quickReplies: [
+        { label:'💳 Payment', text:'What are your payment terms?' },
+        { label:'🔧 Repair', text:'I want to book a phone repair' },
+        { label:'🎮 Download', text:'Can you download games for me?' },
+        { label:'🚚 Shipping', text:'How does shipping in Lagos work?' },
+        { label:'🛡️ Warranty', text:'What is your warranty and return policy?' },
+        { label:'💰 Negotiate', text:'Can I negotiate the price?' },
+      ],
+      toggleChat() { this.chatOpen = !this.chatOpen; if (this.chatOpen) { this.$nextTick(() => this.scrollChat()); scheduleIconRefresh(); } },
+      scrollChat() { const el = this.$refs.chatBody; if (el) el.scrollTop = el.scrollHeight; },
+      sendChat(preset) {
+        const text = (preset !== undefined && preset !== null ? preset : this.chatInput).trim();
+        if (!text) return;
+        this.chatMessages.push({ role:'user', text, time:this.now() });
+        this.chatInput = '';
+        this.chatTyping = true;
+        this.$nextTick(() => this.scrollChat());
+        setTimeout(() => {
+          this.chatTyping = false;
+          const r = this.resolveIntent(text);
+          this.chatMessages.push({ role:'bot', text:r.text, time:this.now(), human:!!r.human, humanPayload:r.payload || '' });
+          this.$nextTick(() => this.scrollChat());
+          scheduleIconRefresh();
+        }, 720);
+      },
+
+      resolveIntent(raw) {
+        const q = raw.toLowerCase();
+        const has = (arr) => arr.some(k => q.indexOf(k) !== -1);
+
+        if (has(['payment','pay','paystack','transfer','card','pos','ussd'])) {
+          return { text: '💳 *Payment at OC Gadgets*\n\n• *Paystack* — card, transfer, USSD, Apple Pay\n• Bank transfer directly\n• POS & cash at our VI store\n• Pay on delivery for orders under ₦1,000,000\n\nAll online payments are encrypted by Paystack.' };
+        }
+        if (has(['repair','fix','broken','cracked','screen','battery problem'])) {
+          return { text: '🔧 *Phone Repair Service*\n\nWe fix all major brands. Screen, battery, charging port, water damage, software.\n\n*Free diagnosis · 30-day warranty · Starting from ' + this.money(this.services.repair.price) + '*.\n\nTap below to book on WhatsApp.', human: true, payload: 'Hello OC Gadgets 👋 I would like to book a phone repair. My device is: ' };
+        }
+        if (has(['download','game download','digital game','psn','install'])) {
+          return { text: '🎮 *Game Downloading*\n\nAny PS5/PS4 game — downloaded, installed, tested.\n\n*Flat rate: ' + this.money(this.services.download.price) + ' per game.*\n\nTap below to request.', human: true, payload: 'Hello OC Gadgets 👋 I would like to request a game download. The game is: ' };
+        }
+        if (has(['buy game','game selling','fifa','fc 25','call of duty','gta','ps5 disc'])) {
+          return { text: '🎮 *Game Selling*\n\nWe stock all the latest titles — physical and digital.\n\nGame prices start from ' + this.money(this.services.gameselling.price) + '.\n\nBrowse "PS & Gaming" or ask me for a specific title.' };
+        }
+        if (has(['shipping','delivery','deliver','lagos','abuja','how long','dispatch'])) {
+          return { text: '🚚 *Shipping*\n\n• Lagos: 24–48 hours\n• Abuja, PH, Ibadan: 2–3 days\n• Other states: 3–5 days\n\nFee: ' + this.money(this.deliveryFee) + ' — *FREE* on orders above ' + this.money(this.shippingThreshold) + '.' };
+        }
+        if (has(['inspection','inspect','test drive','mechanic'])) {
+          return { text: '🔧 *Car inspection*\n\nEvery vehicle can be physically inspected before you pay. Tap below to book.', human: true, payload: 'Hello OC Gadgets 👋 I would like to book a car inspection. My preferred date and location is: ' };
+        }
+        if (has(['warranty','guarantee','return','refund','faulty','damaged'])) {
+          return { text: '🛡️ *Warranty & returns*\n\n• Brand new: 12-month manufacturer\n• Pre-owned phones: 6-month OC warranty\n• Certified vehicles: 30-day engine & gearbox\n• Repairs: 30-day warranty\n\n*Returns:* 7-day window if not as described.' };
+        }
+        if (has(['negotiate','discount','cheaper','reduce','last price','bargain'])) {
+          return { text: '💰 *Yes, we negotiate!*\n\nFor serious buyers we can work something out on cash, multi-item orders, cars and flagship phones. Tap below with your offer.', human: true, payload: 'Hello OC Gadgets 👋 I would like to negotiate. The item is: ' };
+        }
+        if (has(['trade','sell','swap my','trade-in','buyback'])) {
+          return { text: '🔁 *Sell or trade-in*\n\nWe buy phones, cars, consoles and gadgets — same-day payout. Trade in and get an extra 5% bonus credit.', human: true, payload: 'Hello OC Gadgets 👋 I want to sell/trade-in an item. Details: ' };
+        }
+        if (has(['where','location','address','office','shop','visit'])) {
+          return { text: '📍 *Visit us*\n\n12 Adeola Odeku Street, Victoria Island, Lagos.\n\nMon–Sat · 8am–7pm\nPhone: ' + this.formatPhone(this.whatsapp) + '\n\nWalk in, inspect and pay on the spot.' };
+        }
+        if (has(['hello','hi ','hey','good morning','good afternoon','good evening'])) {
+          return { text: 'Hey there! 👋 Welcome to *BuyFromOc* by OC Gadgets.\n\nI can help with buying, phone repairs, game downloads, Paystack payments, shipping and trade-ins.\n\nWhat can I help with?' };
+        }
+        if (has(['thank','thanks','appreciate'])) {
+          return { text: 'You are very welcome! 🙏 If you need anything else, I am right here.' };
+        }
+        if (has(['human','agent','admin','someone','person','call me'])) {
+          return { text: 'Of course — let me connect you with an OC Gadgets team member on WhatsApp.', human: true, payload: 'Hello OC Gadgets 👋 I need to speak with a human agent about: ' };
+        }
+        return { text: 'Hmm, I do not have an instant answer for that one 🤔\n\nLet me pass it to an OC Gadgets human agent — tap below and your question will be pre-filled on WhatsApp.', human: true, payload: 'Hello OC Gadgets 👋 I was chatting with OC Assistant and I have a question:\n\n"' + raw + '"\n\nPlease assist.' };
+      },
+
+      tradeIn: { name:'', phone:'', category:'Phone / Tablet', model:'', condition:'Excellent', notes:'' },
+      submitTradeIn() {
+        const t = this.tradeIn;
+        if (!t.name.trim() || !t.phone.trim() || !t.model.trim()) { this.toast('Please fill name, WhatsApp and item model', 'error'); return; }
+        const msg = 'Hello OC Gadgets 👋\n\n*NEW TRADE-IN SUBMISSION*\n\nName: ' + t.name + '\nWhatsApp: ' + t.phone + '\nCategory: ' + t.category + '\nModel: ' + t.model + '\nCondition: ' + t.condition + '\nNotes: ' + (t.notes || '—') + '\n\nPlease evaluate. Thank you!';
+        window.open(this.waLink(msg), '_blank');
+        this.toast('Opening WhatsApp…', 'success');
+        this.tradeIn = { name:'', phone:'', category:'Phone / Tablet', model:'', condition:'Excellent', notes:'' };
+      },
+
+      money(n) { return '₦' + Number(n || 0).toLocaleString('en-NG'); },
+      now() { try { return new Date().toLocaleTimeString('en-NG', { hour:'2-digit', minute:'2-digit' }); } catch(e) { return ''; } },
+      waLink(msg) { return 'https://wa.me/' + this.whatsapp + '?text=' + encodeURIComponent(msg); },
+      formatPhone(num) {
+        const s = String(num || '').replace(/\D/g, '');
+        if (s.length === 13 && s.startsWith('234')) return '+234 ' + s.slice(3,6) + ' ' + s.slice(6,9) + ' ' + s.slice(9);
+        return '+' + s;
+      },
+
+      applySettings() {
+        let settings = null;
+        try {
+          const raw = localStorage.getItem('bfo_settings');
+          if (raw) settings = JSON.parse(raw);
+        } catch (e) { settings = null; }
+
+        if (settings) {
+          if (settings.whatsapp) this.whatsapp = String(settings.whatsapp);
+          if (typeof settings.shippingThreshold === 'number') this.shippingThreshold = settings.shippingThreshold;
+          if (typeof settings.deliveryFee === 'number') this.deliveryFee = settings.deliveryFee;
+          if (settings.services) {
+            Object.keys(settings.services).forEach(k => {
+              if (this.services[k] && typeof settings.services[k].price === 'number') this.services[k].price = settings.services[k].price;
+            });
+          }
+          if (settings.productPrices) {
+            this.products.forEach(p => {
+              const override = settings.productPrices[String(p.id)];
+              if (typeof override === 'number' && override > 0) p.price = override;
+              const oldOverride = settings.productOldPrices && settings.productOldPrices[String(p.id)];
+              if (typeof oldOverride === 'number') p.oldPrice = oldOverride;
+            });
+          }
+        }
+      },
+
+      mergeSellerListings() {
+        try {
+          const raw = localStorage.getItem('bfo_listings');
+          if (!raw) return;
+          const listings = JSON.parse(raw);
+          const approved = listings.filter(l => l.status === 'approved').map(l => ({
+            id: 'SELLER-' + l.id, name: l.name, brand: l.brand,
+            category: l.category, subcategory: 'Seller Listing',
+            price: l.price, oldPrice: l.oldPrice || 0,
+            condition: l.condition, rating: 5.0, reviews: 0,
+            badge: l.featured ? 'Featured' : 'Seller',
+            badgeColor: l.featured ? '#fbbf24' : '#22d3ee',
+            emoji: l.category === 'cars' ? '🚗' : l.category === 'gaming' ? '🎮' : l.category === 'phones' ? '📱' : '🎧',
+            featured: !!l.featured, stock: 1,
+            img: (l.images && l.images[0]) || '',
+            g1: '#334155', g2: '#0f172a',
+            specs: l.specs && l.specs.length ? l.specs : [l.condition, l.location || 'Lagos', 'Verified by OC Gadgets'],
+            sellerListing: true,
+          }));
+          const seedOnly = this.products.filter(p => !p.sellerListing);
+          this.products = [...approved, ...seedOnly];
+        } catch (e) {}
+      },
+
+      init() {
+        let saved = null;
+        try { saved = localStorage.getItem('bfo-theme'); } catch (e) {}
+        this.dark = saved ? saved === 'dark' : true;
+        document.documentElement.classList.toggle('dark', this.dark);
+
+        this.products = JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
+        this.applySettings();
+        this.mergeSellerListings();
+
+        window.addEventListener('storage', (e) => {
+          if (e.key === 'bfo_settings') {
+            this.products = JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
+            this.applySettings();
+            this.mergeSellerListings();
+            this.toast('⚙️ Prices updated by admin', 'info');
+          }
+          if (e.key === 'bfo_listings') {
+            this.mergeSellerListings();
+            this.toast('Marketplace updated', 'info');
+          }
+        });
+
+        this.chatMessages.push({
+          role: 'bot',
+          text: 'Hi 👋 I am *OC Assistant*, your helper at BuyFromOc by OC Gadgets.\n\nI can help with:\n• Buying phones, cars & gadgets\n• Phone repairs\n• Game downloads\n• Paystack payments, shipping & warranty\n\nWhat can I help with today?',
+          time: this.now(),
+        });
+
+        this.$nextTick(() => scheduleIconRefresh());
+
+        window.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') {
+            if (this.modalOpen) this.closeProduct();
+            if (this.cartOpen) this.cartOpen = false;
+            if (this.chatOpen) this.chatOpen = false;
+            if (this.payModalOpen) this.payModalOpen = false;
+            if (this.serviceModalOpen) this.serviceModalOpen = false;
+          }
+        });
+
+        const observer = new MutationObserver(() => scheduleIconRefresh());
+        observer.observe(document.body, { childList: true, subtree: true });
+
+        setTimeout(scheduleIconRefresh, 250);
+        setTimeout(scheduleIconRefresh, 900);
+      },
+    };
+  }
+
+  document.addEventListener('DOMContentLoaded', () => scheduleIconRefresh());
+</script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
+</body>
+</html>

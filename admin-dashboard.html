@@ -1,0 +1,1612 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#07090e" />
+<title>Admin Console — BuyFromOc | OC Gadgets</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['"Plus Jakarta Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+          display: ['Sora', '"Plus Jakarta Sans"', 'sans-serif'],
+        },
+        colors: {
+          ink: { 950:'#07090e', 900:'#0b0e15', 800:'#12161f', 700:'#1b212d', 600:'#252c3a' },
+          oc: { blue:'#1e7fff', purple:'#a855f7', green:'#22c55e', navy:'#0a1428' },
+        },
+        keyframes: {
+          popIn: { '0%':{opacity:'0',transform:'translateY(14px) scale(.96)'}, '100%':{opacity:'1',transform:'translateY(0) scale(1)'} },
+        },
+        animation: { popIn: 'popIn .35s cubic-bezier(.2,.9,.3,1.2) both' },
+        screens: { 'xs': '400px' },
+      },
+    },
+  };
+</script>
+
+<script>
+  (function () {
+    try {
+      var t = localStorage.getItem('bfo-theme');
+      if (t === 'light') document.documentElement.classList.remove('dark');
+      else document.documentElement.classList.add('dark');
+    } catch (e) { document.documentElement.classList.add('dark'); }
+  })();
+</script>
+
+<style>
+  [x-cloak] { display: none !important; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body { font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif; overflow-x: hidden; }
+  ::selection { background: rgba(251,191,36,.35); }
+
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(140,140,155,.35); border-radius: 999px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(251,191,36,.55); }
+
+  .glass { backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); }
+
+  .field { transition: border-color .3s ease, box-shadow .3s ease, background-color .3s ease; }
+  .field:focus { outline: none; border-color: rgba(251,191,36,.7); box-shadow: 0 0 0 4px rgba(251,191,36,.14); }
+
+  .btn-press { transition: transform .18s cubic-bezier(.2,.8,.2,1), box-shadow .3s ease, background-color .3s ease, color .3s ease, border-color .3s ease, opacity .3s; }
+  .btn-press:hover { transform: translateY(-1px); }
+  .btn-press:active { transform: translateY(0) scale(.975); }
+
+  .tab-active { position: relative; }
+  .tab-active::after {
+    content: ''; position: absolute; left: 12px; right: 12px; bottom: -1px; height: 2px; border-radius: 2px;
+    background: linear-gradient(90deg, #fbbf24, #22d3ee);
+  }
+
+  .grid-bg {
+    background-image:
+      linear-gradient(to right, currentColor 1px, transparent 1px),
+      linear-gradient(to bottom, currentColor 1px, transparent 1px);
+    background-size: 46px 46px;
+  }
+
+  /* Mobile scroll snap on tab bar */
+  .tabs-scroll {
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+  }
+  .tabs-scroll > button {
+    scroll-snap-align: start;
+  }
+
+  /* Prevent iOS zoom on inputs (font-size >= 16px) */
+  @media (max-width: 767px) {
+    input, select, textarea { font-size: 16px !important; }
+  }
+
+  /* Safe area for notched phones */
+  @supports (padding: max(0px)) {
+    .safe-bottom { padding-bottom: max(0.75rem, env(safe-area-inset-bottom)); }
+  }
+</style>
+</head>
+
+<body
+  x-data="adminApp()"
+  x-init="init()"
+  class="min-h-screen bg-zinc-50 text-zinc-900 dark:bg-ink-950 dark:text-zinc-100 antialiased transition-colors duration-500"
+>
+
+<!-- ============ TOASTS ============ -->
+<div class="fixed top-4 right-3 left-3 z-[100] flex flex-col gap-2.5 pointer-events-none sm:top-20 sm:left-auto sm:right-4 sm:max-w-sm">
+  <template x-for="t in toasts" :key="t.id">
+    <div
+      x-transition:enter="transition ease-out duration-300"
+      x-transition:enter-start="opacity-0 translate-x-8 scale-95"
+      x-transition:enter-end="opacity-100 translate-x-0 scale-100"
+      x-transition:leave="transition ease-in duration-200"
+      x-transition:leave-start="opacity-100"
+      x-transition:leave-end="opacity-0 translate-x-8"
+      class="pointer-events-auto flex items-start gap-3 rounded-2xl border border-zinc-200/80 dark:border-white/10 bg-white/95 dark:bg-ink-800/95 glass px-4 py-3 shadow-2xl shadow-black/10 dark:shadow-black/50"
+    >
+      <span
+        class="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full"
+        :class="{
+          'bg-emerald-100 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400': t.type === 'success',
+          'bg-amber-100 text-amber-600 dark:bg-amber-500/15 dark:text-amber-400': t.type === 'info',
+          'bg-rose-100 text-rose-600 dark:bg-rose-500/15 dark:text-rose-400': t.type === 'error'
+        }"
+      >
+        <i data-lucide="check" class="h-4 w-4" x-show="t.type === 'success'"></i>
+        <i data-lucide="info" class="h-4 w-4" x-show="t.type === 'info'"></i>
+        <i data-lucide="alert-triangle" class="h-4 w-4" x-show="t.type === 'error'"></i>
+      </span>
+      <p class="flex-1 text-sm font-medium leading-snug pt-1" x-text="t.message"></p>
+      <button @click="toasts = toasts.filter(x => x.id !== t.id)" class="text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200">
+        <i data-lucide="x" class="h-4 w-4"></i>
+      </button>
+    </div>
+  </template>
+</div>
+
+<!-- ============================================================
+     LOGIN GATE
+============================================================ -->
+<div x-show="!authed" x-cloak class="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-8">
+  <div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+    <div class="absolute -left-40 -top-56 h-[34rem] w-[34rem] rounded-full bg-amber-400/25 blur-[130px] dark:bg-amber-500/10"></div>
+    <div class="absolute -bottom-56 -right-32 h-[30rem] w-[30rem] rounded-full bg-cyan-400/25 blur-[130px] dark:bg-cyan-500/10"></div>
+    <div class="grid-bg absolute inset-0 text-zinc-900 opacity-[0.035] dark:text-white dark:opacity-[0.05]"></div>
+  </div>
+
+  <div class="w-full max-w-md animate-popIn rounded-3xl border border-zinc-200/80 bg-white/85 p-6 shadow-2xl glass dark:border-white/[0.08] dark:bg-ink-900/75 sm:p-8">
+    <div class="flex items-center gap-3">
+      <span class="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-amber-400 via-amber-500 to-cyan-400 text-ink-950 shadow-lg shadow-amber-500/25">
+        <i data-lucide="shield-half" class="h-6 w-6"></i>
+      </span>
+      <div>
+        <h1 class="font-display text-lg font-extrabold leading-none">OC Admin Console</h1>
+        <p class="mt-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-zinc-500">BuyFromOc · OCHub</p>
+      </div>
+    </div>
+
+    <p class="mt-6 text-[13px] leading-relaxed text-zinc-600 dark:text-zinc-400">
+      Restricted area. Enter your admin credentials to manage listings, review submissions and control what goes live on the marketplace.
+    </p>
+
+    <form @submit.prevent="login()" class="mt-6 space-y-4">
+      <div>
+        <label class="mb-1.5 block text-[11px] font-extrabold uppercase tracking-wider text-zinc-500">Admin password</label>
+        <input
+          :type="showPass ? 'text' : 'password'"
+          x-model="password"
+          placeholder="Enter password"
+          autocomplete="current-password"
+          class="field w-full rounded-xl border border-zinc-200 bg-white px-4 py-3.5 text-sm font-medium dark:border-white/10 dark:bg-white/[0.04]"
+        />
+      </div>
+
+      <div x-show="loginError" x-cloak class="rounded-xl border border-rose-400/35 bg-rose-400/8 px-4 py-3">
+        <p class="text-[12.5px] font-semibold text-rose-600 dark:text-rose-400" x-text="loginError"></p>
+      </div>
+
+      <label class="flex cursor-pointer items-center gap-2.5">
+        <input type="checkbox" x-model="showPass" class="h-4 w-4 rounded border-zinc-300 text-amber-500 focus:ring-amber-400">
+        <span class="text-[12.5px] font-semibold text-zinc-600 dark:text-zinc-400">Show password</span>
+      </label>
+
+      <button type="submit" class="btn-press flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 px-5 py-3.5 text-sm font-extrabold text-ink-950 shadow-lg shadow-amber-500/25">
+        <i data-lucide="log-in" class="h-4 w-4"></i> Enter console
+      </button>
+    </form>
+
+    <div class="mt-6 rounded-xl border border-cyan-400/25 bg-cyan-400/5 px-4 py-3">
+      <p class="text-[11.5px] leading-relaxed text-zinc-600 dark:text-zinc-400">
+        <span class="font-extrabold text-cyan-600 dark:text-cyan-400">Demo password:</span>
+        <code class="rounded bg-zinc-100 px-1.5 py-0.5 font-mono text-[11px] font-bold dark:bg-white/10">ocadmin</code>
+      </p>
+    </div>
+
+    <a href="index.html" class="mt-5 block text-center text-[11px] font-bold uppercase tracking-wider text-zinc-400 transition-colors hover:text-amber-500">
+      ← Back to marketplace
+    </a>
+  </div>
+</div>
+
+<!-- ============================================================
+     DASHBOARD
+============================================================ -->
+<div x-show="authed" x-cloak>
+
+  <!-- Header -->
+  <header class="sticky top-0 z-40 glass border-b border-zinc-200/80 dark:border-white/[0.06] bg-white/90 dark:bg-ink-950/80">
+    <!-- Main row -->
+    <div class="mx-auto flex h-14 max-w-[100rem] items-center gap-2 px-3 sm:h-16 sm:gap-3 sm:px-4">
+      <a href="index.html" class="group flex shrink-0 items-center gap-2">
+        <span class="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-amber-400 via-amber-500 to-cyan-400 text-ink-950 shadow-lg shadow-amber-500/25 transition-transform duration-300 group-hover:scale-105 sm:h-10 sm:w-10">
+          <i data-lucide="shield-half" class="h-4 w-4 sm:h-5 sm:w-5"></i>
+        </span>
+        <span class="leading-none">
+          <span class="block font-display text-sm font-extrabold tracking-tight sm:text-base">OC Admin</span>
+          <span class="mt-0.5 hidden text-[9px] font-semibold uppercase tracking-[0.2em] text-zinc-500 xs:block">BuyFromOc</span>
+        </span>
+      </a>
+
+      <div class="flex-1"></div>
+
+      <!-- Desktop-only buttons -->
+      <button @click="seedDemo()" class="btn-press hidden items-center gap-2 rounded-xl border border-zinc-200 bg-white/70 px-3.5 py-2.5 text-[12px] font-bold text-zinc-600 hover:border-cyan-400/70 hover:text-cyan-600 dark:border-white/10 dark:bg-white/5 dark:text-zinc-300 md:flex">
+        <i data-lucide="flask-conical" class="h-3.5 w-3.5"></i> Seed demo
+      </button>
+
+      <button @click="exportJSON()" class="btn-press hidden items-center gap-2 rounded-xl border border-zinc-200 bg-white/70 px-3.5 py-2.5 text-[12px] font-bold text-zinc-600 hover:border-amber-400/70 hover:text-amber-600 dark:border-white/10 dark:bg-white/5 dark:text-zinc-300 md:flex">
+        <i data-lucide="download" class="h-3.5 w-3.5"></i> Export
+      </button>
+
+      <button @click="toggleTheme()" class="btn-press grid h-9 w-9 shrink-0 place-items-center rounded-xl border border-zinc-200 bg-white/70 text-zinc-600 hover:border-amber-400/60 hover:text-amber-500 dark:border-white/10 dark:bg-white/5 dark:text-zinc-300 sm:h-10 sm:w-10">
+        <i data-lucide="moon" class="h-[16px] w-[16px] sm:h-[18px] sm:w-[18px]" x-show="dark"></i>
+        <i data-lucide="sun" class="h-[16px] w-[16px] sm:h-[18px] sm:w-[18px]" x-show="!dark"></i>
+      </button>
+
+      <div class="hidden items-center gap-2.5 rounded-xl border border-zinc-200 bg-white/70 px-3 py-2 dark:border-white/10 dark:bg-white/5 sm:flex">
+        <span class="grid h-7 w-7 place-items-center rounded-lg bg-gradient-to-br from-amber-400 to-cyan-400 text-[11px] font-extrabold text-ink-950">OC</span>
+        <span class="hidden text-[12px] font-bold sm:block">Admin</span>
+      </div>
+
+      <button @click="logout()" class="btn-press grid h-9 w-9 shrink-0 place-items-center rounded-xl border border-zinc-200 bg-white/70 text-zinc-500 hover:border-rose-400/70 hover:text-rose-500 dark:border-white/10 dark:bg-white/5 sm:h-10 sm:w-10">
+        <i data-lucide="log-out" class="h-[16px] w-[16px] sm:h-[18px] sm:w-[18px]"></i>
+      </button>
+    </div>
+
+    <!-- Mobile-only action row -->
+    <div class="flex gap-2 border-t border-zinc-200/60 px-3 py-2 dark:border-white/[0.05] md:hidden">
+      <button @click="seedDemo()" class="btn-press flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-zinc-200 bg-white/70 py-2 text-[11.5px] font-bold text-zinc-600 dark:border-white/10 dark:bg-white/5 dark:text-zinc-300">
+        <i data-lucide="flask-conical" class="h-3.5 w-3.5"></i> Seed
+      </button>
+      <button @click="exportJSON()" class="btn-press flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-zinc-200 bg-white/70 py-2 text-[11.5px] font-bold text-zinc-600 dark:border-white/10 dark:bg-white/5 dark:text-zinc-300">
+        <i data-lucide="download" class="h-3.5 w-3.5"></i> Export
+      </button>
+      <button @click="logout()" class="btn-press flex items-center justify-center gap-1.5 rounded-lg border border-rose-400/40 bg-rose-400/5 px-3 py-2 text-[11.5px] font-bold text-rose-500">
+        <i data-lucide="log-out" class="h-3.5 w-3.5"></i> Exit
+      </button>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-[100rem] px-3 py-5 sm:px-4 sm:py-6 lg:py-8">
+
+    <!-- Page title -->
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <p class="text-[10px] font-extrabold uppercase tracking-[0.22em] text-amber-500 sm:text-[11px]">Dashboard</p>
+        <h1 class="mt-1 font-display text-xl font-extrabold tracking-tight sm:mt-1.5 sm:text-2xl lg:text-3xl">Marketplace Control</h1>
+        <p class="mt-1.5 text-[12.5px] text-zinc-500 sm:mt-2 sm:text-[13px]">Review, approve and manage everything listed on BuyFromOc.</p>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2">
+        <template x-if="pendingCount > 0">
+          <span class="flex items-center gap-2 rounded-full border border-amber-400/40 bg-amber-400/10 px-3 py-1.5 text-[11px] font-extrabold text-amber-600 dark:text-amber-400 sm:px-3.5 sm:py-2 sm:text-[12px]">
+            <span class="relative flex h-2 w-2">
+              <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-500 opacity-75"></span>
+              <span class="relative inline-flex h-2 w-2 rounded-full bg-amber-500"></span>
+            </span>
+            <span x-text="pendingCount + ' awaiting review'"></span>
+          </span>
+        </template>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="mt-5 grid grid-cols-2 gap-3 sm:mt-7 sm:gap-4 lg:grid-cols-4">
+      <div class="rounded-2xl border border-zinc-200/80 bg-white/75 p-3.5 glass dark:border-white/[0.08] dark:bg-ink-900/60 sm:p-5">
+        <div class="flex items-center justify-between">
+          <span class="grid h-8 w-8 place-items-center rounded-lg bg-amber-400/15 text-amber-500 sm:h-9 sm:w-9 sm:rounded-xl"><i data-lucide="clock" class="h-4 w-4"></i></span>
+          <span class="hidden text-[10px] font-extrabold uppercase tracking-wider text-zinc-400 sm:block">Queue</span>
+        </div>
+        <p class="mt-3 font-display text-2xl font-extrabold sm:mt-4 sm:text-3xl" x-text="pendingCount"></p>
+        <p class="mt-0.5 text-[11px] font-semibold text-zinc-500 sm:mt-1 sm:text-[12px]">Pending</p>
+      </div>
+
+      <div class="rounded-2xl border border-zinc-200/80 bg-white/75 p-3.5 glass dark:border-white/[0.08] dark:bg-ink-900/60 sm:p-5">
+        <div class="flex items-center justify-between">
+          <span class="grid h-8 w-8 place-items-center rounded-lg bg-emerald-400/15 text-emerald-500 sm:h-9 sm:w-9 sm:rounded-xl"><i data-lucide="badge-check" class="h-4 w-4"></i></span>
+          <span class="hidden text-[10px] font-extrabold uppercase tracking-wider text-zinc-400 sm:block">Live</span>
+        </div>
+        <p class="mt-3 font-display text-2xl font-extrabold sm:mt-4 sm:text-3xl" x-text="approvedCount"></p>
+        <p class="mt-0.5 text-[11px] font-semibold text-zinc-500 sm:mt-1 sm:text-[12px]">Approved</p>
+      </div>
+
+      <div class="rounded-2xl border border-zinc-200/80 bg-white/75 p-3.5 glass dark:border-white/[0.08] dark:bg-ink-900/60 sm:p-5">
+        <div class="flex items-center justify-between">
+          <span class="grid h-8 w-8 place-items-center rounded-lg bg-rose-400/15 text-rose-500 sm:h-9 sm:w-9 sm:rounded-xl"><i data-lucide="x-circle" class="h-4 w-4"></i></span>
+          <span class="hidden text-[10px] font-extrabold uppercase tracking-wider text-zinc-400 sm:block">Rejected</span>
+        </div>
+        <p class="mt-3 font-display text-2xl font-extrabold sm:mt-4 sm:text-3xl" x-text="rejectedCount"></p>
+        <p class="mt-0.5 text-[11px] font-semibold text-zinc-500 sm:mt-1 sm:text-[12px]">Rejected</p>
+      </div>
+
+      <div class="rounded-2xl border border-zinc-200/80 bg-white/75 p-3.5 glass dark:border-white/[0.08] dark:bg-ink-900/60 sm:p-5">
+        <div class="flex items-center justify-between">
+          <span class="grid h-8 w-8 place-items-center rounded-lg bg-cyan-400/15 text-cyan-500 sm:h-9 sm:w-9 sm:rounded-xl"><i data-lucide="trending-up" class="h-4 w-4"></i></span>
+          <span class="hidden text-[10px] font-extrabold uppercase tracking-wider text-zinc-400 sm:block">Value</span>
+        </div>
+        <p class="mt-3 truncate font-display text-lg font-extrabold sm:mt-4 sm:text-2xl" x-text="money(totalValue)"></p>
+        <p class="mt-0.5 text-[11px] font-semibold text-zinc-500 sm:mt-1 sm:text-[12px]">Total value</p>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs-scroll no-scrollbar mt-5 -mx-3 flex gap-1 overflow-x-auto border-b border-zinc-200 px-3 dark:border-white/[0.08] sm:-mx-4 sm:mt-8 sm:px-4">
+      <template x-for="tab in tabs" :key="tab.id">
+        <button
+          @click="currentTab = tab.id"
+          class="relative flex shrink-0 items-center gap-1.5 px-3 py-2.5 text-[12px] font-bold transition-colors sm:gap-2 sm:px-4 sm:py-3 sm:text-[13px]"
+          :class="currentTab === tab.id ? 'tab-active text-amber-500' : 'text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200'"
+        >
+          <i :data-lucide="tab.icon" class="h-3.5 w-3.5 sm:h-4 sm:w-4"></i>
+          <span x-text="tab.label"></span>
+          <span
+            class="rounded-full px-1.5 py-0.5 text-[9px] font-extrabold sm:text-[10px]"
+            :class="currentTab === tab.id ? 'bg-amber-400/20 text-amber-600 dark:text-amber-400' : 'bg-zinc-100 text-zinc-500 dark:bg-white/8 dark:text-zinc-500'"
+            x-text="tabCount(tab.id)"
+          ></span>
+        </button>
+      </template>
+    </div>
+
+    <!-- ========================================================
+         PRICES & SETTINGS TAB
+    ======================================================== -->
+    <div x-show="currentTab === 'prices'" x-cloak class="mt-5 space-y-4 sm:mt-6 sm:space-y-6">
+
+      <!-- Business settings -->
+      <div class="rounded-2xl border border-zinc-200/80 bg-white/75 p-4 glass dark:border-white/[0.08] dark:bg-ink-900/60 sm:p-6">
+        <div class="flex items-center gap-3">
+          <span class="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-amber-400 to-cyan-400 text-ink-950 sm:h-10 sm:w-10">
+            <i data-lucide="settings" class="h-4 w-4 sm:h-5 sm:w-5"></i>
+          </span>
+          <div class="min-w-0">
+            <h3 class="font-display text-sm font-extrabold sm:text-base">Business Settings</h3>
+            <p class="text-[11px] font-semibold text-zinc-500 sm:text-[11.5px]">WhatsApp number, shipping and delivery fees</p>
+          </div>
+        </div>
+
+        <div class="mt-4 grid grid-cols-1 gap-3 sm:mt-5 sm:gap-4 sm:grid-cols-3">
+          <div>
+            <label class="mb-1.5 block text-[10.5px] font-extrabold uppercase tracking-wider text-zinc-500 sm:text-[11px]">WhatsApp number</label>
+            <input type="text" x-model="settingsForm.whatsapp" placeholder="2347038573480"
+              class="field w-full rounded-xl border border-zinc-200 bg-white px-3.5 py-2.5 text-[13px] font-medium dark:border-white/10 dark:bg-white/[0.04] sm:px-4 sm:py-3 sm:text-sm" />
+            <p class="mt-1 text-[10px] font-semibold text-zinc-400">Format: 234XXXXXXXXXX</p>
+          </div>
+          <div>
+            <label class="mb-1.5 block text-[10.5px] font-extrabold uppercase tracking-wider text-zinc-500 sm:text-[11px]">Free delivery above (₦)</label>
+            <input type="number" x-model.number="settingsForm.shippingThreshold" placeholder="500000"
+              class="field w-full rounded-xl border border-zinc-200 bg-white px-3.5 py-2.5 text-[13px] font-medium dark:border-white/10 dark:bg-white/[0.04] sm:px-4 sm:py-3 sm:text-sm" />
+          </div>
+          <div>
+            <label class="mb-1.5 block text-[10.5px] font-extrabold uppercase tracking-wider text-zinc-500 sm:text-[11px]">Delivery fee (₦)</label>
+            <input type="number" x-model.number="settingsForm.deliveryFee" placeholder="15000"
+              class="field w-full rounded-xl border border-zinc-200 bg-white px-3.5 py-2.5 text-[13px] font-medium dark:border-white/10 dark:bg-white/[0.04] sm:px-4 sm:py-3 sm:text-sm" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Service prices -->
+      <div class="rounded-2xl border border-zinc-200/80 bg-white/75 p-4 glass dark:border-white/[0.08] dark:bg-ink-900/60 sm:p-6">
+        <div class="flex items-center gap-3">
+          <span class="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-oc-blue to-oc-purple text-white sm:h-10 sm:w-10">
+            <i data-lucide="wrench" class="h-4 w-4 sm:h-5 sm:w-5"></i>
+          </span>
+          <div class="min-w-0">
+            <h3 class="font-display text-sm font-extrabold sm:text-base">Service Prices</h3>
+            <p class="text-[11px] font-semibold text-zinc-500 sm:text-[11.5px]">Phone Repair · Game Selling · Game Downloading</p>
+          </div>
+        </div>
+
+        <div class="mt-4 grid grid-cols-1 gap-3 sm:mt-5 sm:gap-4 sm:grid-cols-3">
+          <div>
+            <label class="mb-1.5 flex items-center gap-1.5 text-[10.5px] font-extrabold uppercase tracking-wider text-oc-blue sm:text-[11px]">
+              <i data-lucide="wrench" class="h-3.5 w-3.5"></i> Phone Repair (₦)
+            </label>
+            <input type="number" x-model.number="settingsForm.services.repair.price"
+              class="field w-full rounded-xl border border-oc-blue/40 bg-oc-blue/5 px-3.5 py-2.5 text-[13px] font-extrabold text-oc-blue dark:bg-oc-blue/10 sm:px-4 sm:py-3 sm:text-sm" />
+            <p class="mt-1 text-[10px] font-semibold text-zinc-400">Shown as "Starting from"</p>
+          </div>
+          <div>
+            <label class="mb-1.5 flex items-center gap-1.5 text-[10.5px] font-extrabold uppercase tracking-wider text-oc-purple sm:text-[11px]">
+              <i data-lucide="gamepad-2" class="h-3.5 w-3.5"></i> Game Selling (₦)
+            </label>
+            <input type="number" x-model.number="settingsForm.services.gameselling.price"
+              class="field w-full rounded-xl border border-oc-purple/40 bg-oc-purple/5 px-3.5 py-2.5 text-[13px] font-extrabold text-oc-purple dark:bg-oc-purple/10 sm:px-4 sm:py-3 sm:text-sm" />
+            <p class="mt-1 text-[10px] font-semibold text-zinc-400">Shown as "Games from"</p>
+          </div>
+          <div>
+            <label class="mb-1.5 flex items-center gap-1.5 text-[10.5px] font-extrabold uppercase tracking-wider text-oc-green sm:text-[11px]">
+              <i data-lucide="cloud-download" class="h-3.5 w-3.5"></i> Game Download (₦)
+            </label>
+            <input type="number" x-model.number="settingsForm.services.download.price"
+              class="field w-full rounded-xl border border-oc-green/40 bg-oc-green/5 px-3.5 py-2.5 text-[13px] font-extrabold text-oc-green dark:bg-oc-green/10 sm:px-4 sm:py-3 sm:text-sm" />
+            <p class="mt-1 text-[10px] font-semibold text-zinc-400">Shown as "Per game"</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product prices -->
+      <div class="rounded-2xl border border-zinc-200/80 bg-white/75 p-4 glass dark:border-white/[0.08] dark:bg-ink-900/60 sm:p-6">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div class="flex items-center gap-3">
+            <span class="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-amber-400 to-amber-500 text-ink-950 sm:h-10 sm:w-10">
+              <i data-lucide="tag" class="h-4 w-4 sm:h-5 sm:w-5"></i>
+            </span>
+            <div class="min-w-0">
+              <h3 class="font-display text-sm font-extrabold sm:text-base">Product Prices</h3>
+              <p class="text-[11px] font-semibold text-zinc-500 sm:text-[11.5px]">Edit any price — leave blank to use default</p>
+            </div>
+          </div>
+          <div class="flex w-full items-center gap-2 rounded-lg border border-zinc-200 bg-white/70 px-3 py-2 dark:border-white/10 dark:bg-white/5 sm:w-auto">
+            <i data-lucide="search" class="h-3.5 w-3.5 shrink-0 text-zinc-400"></i>
+            <input type="text" x-model="priceSearch" placeholder="Search products…"
+              class="w-full border-0 bg-transparent text-[13px] font-semibold outline-none placeholder-zinc-400 dark:text-zinc-200 sm:w-56 sm:text-[12px]" />
+          </div>
+        </div>
+
+        <div class="mt-4 max-h-[60vh] space-y-2.5 overflow-y-auto pr-1 sm:mt-5 sm:max-h-[38rem]">
+          <template x-for="p in productsForPricing.filter(x => !priceSearch || (x.name + ' ' + x.category).toLowerCase().includes(priceSearch.toLowerCase()))" :key="p.id">
+            <div class="rounded-xl border border-zinc-200/80 bg-white p-3 dark:border-white/[0.07] dark:bg-white/[0.02] sm:p-3.5">
+              <!-- Product info -->
+              <div class="min-w-0">
+                <p class="text-[12.5px] font-bold leading-snug" x-text="p.name"></p>
+                <div class="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1">
+                  <span class="rounded-full bg-zinc-100 px-2 py-0.5 text-[9.5px] font-extrabold uppercase tracking-wider text-zinc-500 dark:bg-white/8 dark:text-zinc-400" x-text="p.category"></span>
+                  <span class="text-[10px] font-mono font-bold text-zinc-400" x-text="'ID: ' + p.id"></span>
+                  <span class="text-[10px] font-bold text-zinc-400">Default: <span x-text="money(p.defaultPrice)"></span></span>
+                </div>
+              </div>
+
+              <!-- Inputs -->
+              <div class="mt-3 grid grid-cols-1 gap-2.5 xs:grid-cols-[1fr_1fr_auto] sm:mt-3 sm:gap-3">
+                <div>
+                  <label class="mb-1 block text-[10px] font-extrabold uppercase tracking-wider text-zinc-500">Price (₦)</label>
+                  <input type="number" :value="getProductPrice(p.id)" @input="setProductPrice(p.id, $event.target.value)"
+                    class="field w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-[13px] font-bold dark:border-white/10 dark:bg-white/[0.05]" />
+                </div>
+                <div>
+                  <label class="mb-1 block text-[10px] font-extrabold uppercase tracking-wider text-zinc-500">Old price (₦)</label>
+                  <input type="number" :value="getProductOldPrice(p.id) || ''" @input="setProductOldPrice(p.id, $event.target.value)"
+                    placeholder="0"
+                    class="field w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-[13px] font-bold dark:border-white/10 dark:bg-white/[0.05]" />
+                </div>
+                <div class="flex items-end xs:w-auto">
+                  <button @click="setProductPrice(p.id, ''); setProductOldPrice(p.id, '')" title="Reset to default"
+                    class="btn-press grid h-9 w-full place-items-center rounded-lg border border-zinc-200 text-zinc-400 hover:border-amber-400/60 hover:text-amber-500 dark:border-white/10 xs:w-9">
+                    <i data-lucide="rotate-ccw" class="h-3.5 w-3.5"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <!-- Save bar -->
+      <div class="safe-bottom sticky bottom-3 z-20 flex flex-col gap-2 rounded-2xl border border-emerald-400/40 bg-emerald-400/15 p-3 backdrop-blur-md dark:bg-emerald-500/15 sm:bottom-4 sm:flex-row sm:items-center sm:gap-3 sm:p-4">
+        <div class="flex items-center gap-2 sm:flex-1">
+          <i data-lucide="info" class="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400 sm:h-5 sm:w-5"></i>
+          <p class="text-[11.5px] font-semibold leading-snug text-zinc-700 dark:text-zinc-300 sm:text-[12.5px]">
+            Click <span class="font-extrabold">Save All Changes</span> to push updates live.
+          </p>
+        </div>
+        <div class="flex gap-2 sm:flex-initial">
+          <button @click="resetSettings()"
+            class="btn-press flex-1 rounded-xl border border-zinc-300 bg-white px-3 py-2.5 text-[12px] font-extrabold text-zinc-700 hover:border-rose-400/60 hover:text-rose-500 dark:border-white/12 dark:bg-white/5 dark:text-zinc-200 sm:flex-none sm:px-4">
+            <i data-lucide="rotate-ccw" class="inline h-3.5 w-3.5 -mt-0.5 mr-1"></i> Reset
+          </button>
+          <button @click="saveSettings()"
+            class="btn-press flex-1 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 px-3 py-2.5 text-[12.5px] font-extrabold text-white shadow-lg shadow-emerald-500/25 sm:flex-none sm:px-5 sm:text-[13px]">
+            <i data-lucide="save" class="inline h-3.5 w-3.5 -mt-0.5 mr-1"></i> Save
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================
+         ACTIVITY TAB
+    ======================================================== -->
+    <div x-show="currentTab === 'activity'" x-cloak class="mt-5 sm:mt-6">
+      <div class="rounded-2xl border border-zinc-200/80 bg-white/75 p-4 glass dark:border-white/[0.08] dark:bg-ink-900/60 sm:p-5">
+        <div class="flex items-center justify-between gap-3">
+          <h3 class="font-display text-sm font-extrabold sm:text-base">Recent admin activity</h3>
+          <button @click="activity = []; saveActivity(); toast('Activity cleared','info')" class="shrink-0 text-[10.5px] font-bold uppercase tracking-wider text-zinc-400 hover:text-rose-500 sm:text-[11px]">Clear log</button>
+        </div>
+
+        <div x-show="activity.length === 0" class="mt-5 rounded-xl border border-dashed border-zinc-300 py-8 text-center dark:border-white/12 sm:py-10">
+          <i data-lucide="history" class="mx-auto h-6 w-6 text-zinc-400"></i>
+          <p class="mt-2 text-[12.5px] font-semibold text-zinc-500 sm:text-[13px]">No activity yet</p>
+        </div>
+
+        <ul class="mt-4 space-y-2 sm:mt-5 sm:space-y-2.5">
+          <template x-for="a in activity" :key="a.id">
+            <li class="flex items-start gap-2.5 rounded-xl border border-zinc-200/70 bg-white px-3 py-2.5 dark:border-white/[0.07] dark:bg-white/[0.02] sm:gap-3 sm:px-4 sm:py-3">
+              <span
+                class="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-lg sm:h-7 sm:w-7"
+                :class="{
+                  'bg-emerald-100 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400': a.kind === 'approve',
+                  'bg-rose-100 text-rose-600 dark:bg-rose-500/15 dark:text-rose-400': a.kind === 'reject',
+                  'bg-amber-100 text-amber-600 dark:bg-amber-500/15 dark:text-amber-400': a.kind === 'feature',
+                  'bg-zinc-100 text-zinc-500 dark:bg-white/8 dark:text-zinc-400': a.kind === 'other'
+                }"
+              >
+                <i data-lucide="check" class="h-3 w-3 sm:h-3.5 sm:w-3.5" x-show="a.kind === 'approve'"></i>
+                <i data-lucide="x" class="h-3 w-3 sm:h-3.5 sm:w-3.5" x-show="a.kind === 'reject'"></i>
+                <i data-lucide="star" class="h-3 w-3 sm:h-3.5 sm:w-3.5" x-show="a.kind === 'feature'"></i>
+                <i data-lucide="activity" class="h-3 w-3 sm:h-3.5 sm:w-3.5" x-show="a.kind === 'other'"></i>
+              </span>
+              <div class="min-w-0 flex-1">
+                <p class="text-[12px] font-bold sm:text-[13px]" x-text="a.detail"></p>
+                <p class="mt-0.5 text-[10.5px] font-semibold text-zinc-400 sm:text-[11px]" x-text="formatDate(a.at)"></p>
+              </div>
+            </li>
+          </template>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ========================================================
+         FILTERS (hidden on Prices & Activity)
+    ======================================================== -->
+    <div x-show="currentTab !== 'prices' && currentTab !== 'activity'" x-cloak class="mt-4 rounded-2xl border border-zinc-200/80 bg-white/75 p-3 glass dark:border-white/[0.08] dark:bg-ink-900/60 sm:mt-5 sm:p-4">
+      <div class="grid gap-2.5 sm:gap-3 lg:grid-cols-[1.6fr_1fr_1fr]">
+        <div class="relative">
+          <i data-lucide="search" class="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400 sm:left-4"></i>
+          <input
+            type="text"
+            x-model="search"
+            placeholder="Search listings…"
+            class="field w-full rounded-xl border border-zinc-200 bg-white py-2.5 pl-10 pr-3 text-[13px] font-medium dark:border-white/10 dark:bg-white/[0.04] sm:py-3 sm:pl-11 sm:pr-4 sm:text-sm"
+          />
+        </div>
+
+        <div class="relative">
+          <i data-lucide="layers" class="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400 sm:left-4"></i>
+          <select x-model="categoryFilter" class="field w-full appearance-none rounded-xl border border-zinc-200 bg-white py-2.5 pl-10 pr-9 text-[13px] font-semibold dark:border-white/10 dark:bg-white/[0.04] sm:py-3 sm:pl-11 sm:pr-10 sm:text-sm">
+            <option value="all">All categories</option>
+            <option value="phones">Phones &amp; Tablets</option>
+            <option value="cars">Cars &amp; Automotive</option>
+            <option value="gaming">PS &amp; Gaming Gear</option>
+            <option value="accessories">Accessories &amp; Other</option>
+          </select>
+          <i data-lucide="chevron-down" class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400 sm:right-4"></i>
+        </div>
+
+        <div class="relative">
+          <i data-lucide="arrow-up-down" class="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400 sm:left-4"></i>
+          <select x-model="sortBy" class="field w-full appearance-none rounded-xl border border-zinc-200 bg-white py-2.5 pl-10 pr-9 text-[13px] font-semibold dark:border-white/10 dark:bg-white/[0.04] sm:py-3 sm:pl-11 sm:pr-10 sm:text-sm">
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+            <option value="priceHigh">Price: High → Low</option>
+            <option value="priceLow">Price: Low → High</option>
+            <option value="name">Name: A → Z</option>
+          </select>
+          <i data-lucide="chevron-down" class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400 sm:right-4"></i>
+        </div>
+      </div>
+
+      <div class="mt-3 flex flex-wrap items-center gap-2 border-t border-zinc-200/70 pt-3 dark:border-white/[0.06] sm:mt-4 sm:pt-4">
+        <span class="hidden text-[11px] font-bold uppercase tracking-wider text-zinc-500 sm:block">Bulk:</span>
+        <button
+          x-show="currentTab === 'queue' && selectedIds.length > 0"
+          @click="bulkApprove()"
+          class="btn-press inline-flex items-center gap-1.5 rounded-full bg-emerald-500 px-3 py-1.5 text-[10.5px] font-extrabold text-white sm:px-3.5 sm:text-[11px]"
+        >
+          <i data-lucide="check-check" class="h-3 w-3"></i> Approve <span x-text="selectedIds.length"></span>
+        </button>
+        <button
+          x-show="selectedIds.length > 0"
+          @click="selectedIds = []"
+          class="btn-press inline-flex items-center gap-1.5 rounded-full border border-zinc-200 px-3 py-1.5 text-[10.5px] font-bold text-zinc-500 dark:border-white/10 sm:px-3.5 sm:text-[11px]"
+        >
+          Clear
+        </button>
+        <button
+          x-show="currentTab === 'queue' && queue.length > 0 && selectedIds.length === 0"
+          @click="selectedIds = queue.map(l => l.id)"
+          class="btn-press inline-flex items-center gap-1.5 rounded-full border border-zinc-200 px-3 py-1.5 text-[10.5px] font-bold text-zinc-500 hover:border-amber-400/60 hover:text-amber-500 dark:border-white/10 sm:px-3.5 sm:text-[11px]"
+        >
+          Select all
+        </button>
+
+        <span class="ml-auto text-[10.5px] font-bold text-zinc-400 sm:text-[11px]">
+          <span x-text="visibleItems.length"></span> shown
+        </span>
+      </div>
+    </div>
+
+    <!-- ========================================================
+         LISTING GRID
+    ======================================================== -->
+    <div x-show="currentTab !== 'activity' && currentTab !== 'prices'" x-cloak class="mt-4 sm:mt-6">
+      <div x-show="visibleItems.length > 0" class="grid grid-cols-1 gap-3 xs:grid-cols-2 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4">
+        <template x-for="item in visibleItems" :key="item._key">
+          <article
+            class="group relative flex flex-col overflow-hidden rounded-2xl border bg-white transition-all duration-300 hover:shadow-xl dark:bg-ink-900"
+            :class="{
+              'border-amber-400/50 hover:border-amber-400 dark:border-amber-400/25': item.status === 'pending',
+              'border-zinc-200/80 dark:border-white/[0.07] hover:border-emerald-400/50': item.status === 'approved',
+              'border-rose-400/40 dark:border-rose-400/20 hover:border-rose-400/70': item.status === 'rejected'
+            }"
+          >
+            <div class="relative aspect-[4/3] cursor-pointer overflow-hidden" @click="openDetail(item)">
+              <div class="absolute inset-0" :style="'background-image: linear-gradient(135deg,' + (item.g1 || '#3f3f46') + ',' + (item.g2 || '#18181b') + ')'"></div>
+              <span class="absolute inset-0 grid place-items-center text-4xl opacity-30 sm:text-5xl" x-text="item.emoji || '📦'"></span>
+              <img
+                x-show="primaryImage(item)"
+                :src="primaryImage(item)"
+                @error="$el.style.display='none'"
+                :alt="item.name"
+                loading="lazy"
+                class="relative h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+
+              <div class="absolute left-2 top-2 flex flex-col items-start gap-1 sm:left-2.5 sm:top-2.5">
+                <span
+                  class="rounded-full px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider"
+                  :class="{
+                    'bg-amber-400 text-ink-950': item.status === 'pending',
+                    'bg-emerald-500 text-white': item.status === 'approved',
+                    'bg-rose-500 text-white': item.status === 'rejected'
+                  }"
+                  x-text="item.status"
+                ></span>
+              </div>
+
+              <span
+                x-show="item.source === 'seller'"
+                class="absolute right-2 top-2 rounded-full bg-cyan-500 px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-white sm:right-2.5 sm:top-2.5"
+              >Seller</span>
+
+              <template x-if="item.status === 'pending'">
+                <label class="absolute bottom-2 left-2 flex cursor-pointer items-center gap-1.5 rounded-lg bg-black/60 px-2 py-1 backdrop-blur sm:bottom-2.5 sm:left-2.5 sm:gap-2 sm:px-2.5 sm:py-1.5">
+                  <input type="checkbox" :value="item.id" x-model="selectedIds" class="h-3.5 w-3.5 rounded border-white/30 text-amber-500 focus:ring-amber-400">
+                  <span class="text-[10px] font-extrabold text-white">Select</span>
+                </label>
+              </template>
+            </div>
+
+            <div class="flex flex-1 flex-col p-3 sm:p-3.5">
+              <div class="flex items-center justify-between gap-2">
+                <span class="truncate text-[9.5px] font-extrabold uppercase tracking-[0.14em] text-zinc-400" x-text="item.brand"></span>
+                <span class="shrink-0 font-mono text-[9.5px] font-bold text-zinc-400" x-text="item.id"></span>
+              </div>
+
+              <h3 class="mt-1.5 line-clamp-2 cursor-pointer text-[12.5px] font-bold leading-snug transition-colors group-hover:text-amber-500 sm:text-[13.5px]" @click="openDetail(item)" x-text="item.name"></h3>
+
+              <p class="mt-1 line-clamp-1 text-[10.5px] text-zinc-500 sm:mt-1.5 sm:text-[11px]" x-text="item.condition"></p>
+
+              <div class="mt-2.5 flex items-end justify-between gap-2 sm:mt-3">
+                <p class="font-display text-sm font-extrabold sm:text-base" x-text="money(item.price)"></p>
+                <span class="truncate text-[10px] font-bold text-zinc-400" x-text="item.seller ? item.seller.name : 'OC Gadgets'"></span>
+              </div>
+
+              <div class="mt-3 flex gap-1.5 border-t border-zinc-200/70 pt-3 dark:border-white/[0.06] sm:mt-3.5 sm:pt-3.5">
+                <template x-if="item.status === 'pending'">
+                  <div class="flex w-full gap-1.5">
+                    <button @click.stop="approve(item)" class="btn-press flex flex-1 items-center justify-center gap-1 rounded-lg bg-emerald-500 py-2 text-[10.5px] font-extrabold text-white hover:bg-emerald-600 sm:gap-1.5 sm:text-[11px]">
+                      <i data-lucide="check" class="h-3 w-3"></i> Approve
+                    </button>
+                    <button @click.stop="openReject(item)" class="btn-press flex flex-1 items-center justify-center gap-1 rounded-lg bg-rose-500 py-2 text-[10.5px] font-extrabold text-white hover:bg-rose-600 sm:gap-1.5 sm:text-[11px]">
+                      <i data-lucide="x" class="h-3 w-3"></i> Reject
+                    </button>
+                  </div>
+                </template>
+
+                <template x-if="item.status === 'approved'">
+                  <div class="flex w-full gap-1.5">
+                    <button @click.stop="toggleFeatured(item)" class="btn-press flex flex-1 items-center justify-center gap-1 rounded-lg border py-2 text-[10.5px] font-extrabold sm:gap-1.5 sm:text-[11px]"
+                      :class="item.featured ? 'border-amber-400 bg-amber-400/15 text-amber-600 dark:text-amber-400' : 'border-zinc-200 text-zinc-500 hover:border-amber-400/60 hover:text-amber-500 dark:border-white/10'">
+                      <i data-lucide="star" class="h-3 w-3" :class="item.featured ? 'fill-current' : ''"></i>
+                      <span x-text="item.featured ? 'Featured' : 'Feature'"></span>
+                    </button>
+                    <button @click.stop="openDetail(item)" class="btn-press grid h-8 w-8 shrink-0 place-items-center rounded-lg border border-zinc-200 text-zinc-500 hover:border-cyan-400/60 hover:text-cyan-500 dark:border-white/10 sm:w-9">
+                      <i data-lucide="eye" class="h-3.5 w-3.5"></i>
+                    </button>
+                  </div>
+                </template>
+
+                <template x-if="item.status === 'rejected'">
+                  <div class="flex w-full gap-1.5">
+                    <button @click.stop="approve(item)" class="btn-press flex flex-1 items-center justify-center gap-1 rounded-lg border border-emerald-400/50 py-2 text-[10.5px] font-extrabold text-emerald-600 hover:bg-emerald-500 hover:text-white dark:text-emerald-400 sm:gap-1.5 sm:text-[11px]">
+                      <i data-lucide="undo" class="h-3 w-3"></i> Restore
+                    </button>
+                    <button @click.stop="openDetail(item)" class="btn-press grid h-8 w-8 shrink-0 place-items-center rounded-lg border border-zinc-200 text-zinc-500 hover:border-cyan-400/60 hover:text-cyan-500 dark:border-white/10 sm:w-9">
+                      <i data-lucide="eye" class="h-3.5 w-3.5"></i>
+                    </button>
+                  </div>
+                </template>
+              </div>
+            </div>
+          </article>
+        </template>
+      </div>
+
+      <div x-show="visibleItems.length === 0" class="rounded-3xl border border-dashed border-zinc-300 bg-white/60 px-4 py-12 text-center dark:border-white/12 dark:bg-white/[0.02] sm:px-6 sm:py-16">
+        <span class="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-zinc-100 text-zinc-400 dark:bg-white/5 sm:h-16 sm:w-16">
+          <i data-lucide="inbox" class="h-6 w-6 sm:h-7 sm:w-7"></i>
+        </span>
+        <h3 class="mt-4 font-display text-base font-bold sm:mt-5 sm:text-lg">Nothing here yet</h3>
+        <p class="mx-auto mt-1.5 max-w-sm text-[12.5px] text-zinc-500 sm:mt-2 sm:text-sm" x-text="emptyMessage"></p>
+        <button x-show="currentTab === 'queue'" @click="seedDemo()" class="btn-press mt-5 inline-flex items-center gap-2 rounded-xl bg-zinc-900 px-4 py-2.5 text-[11.5px] font-extrabold text-white dark:bg-white dark:text-ink-950 sm:mt-6 sm:px-5 sm:text-xs">
+          <i data-lucide="flask-conical" class="h-3.5 w-3.5"></i> Seed demo
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- ============================================================
+       DETAIL DRAWER
+  ============================================================ -->
+  <div x-show="detailOpen" x-cloak class="fixed inset-0 z-[70]">
+    <div
+      x-show="detailOpen"
+      x-transition:enter="transition ease-out duration-300"
+      x-transition:enter-start="opacity-0"
+      x-transition:enter-end="opacity-100"
+      @click="closeDetail()"
+      class="absolute inset-0 bg-zinc-950/60 backdrop-blur-sm"
+    ></div>
+
+    <div
+      x-show="detailOpen"
+      x-transition:enter="transition ease-out duration-400"
+      x-transition:enter-start="translate-x-full"
+      x-transition:enter-end="translate-x-0"
+      x-transition:leave="transition ease-in duration-250"
+      x-transition:leave-start="translate-x-0"
+      x-transition:leave-end="translate-x-full"
+      class="absolute right-0 top-0 flex h-full w-full flex-col border-l border-zinc-200 bg-white shadow-2xl dark:border-white/10 dark:bg-ink-900 sm:max-w-xl"
+    >
+      <template x-if="active">
+        <div class="flex h-full flex-col">
+          <div class="flex items-start justify-between gap-3 border-b border-zinc-200 px-4 py-3.5 dark:border-white/[0.08] sm:gap-4 sm:px-5 sm:py-4">
+            <div class="min-w-0">
+              <p class="font-mono text-[10.5px] font-bold text-zinc-400 sm:text-[11px]" x-text="active.id"></p>
+              <h2 class="mt-0.5 line-clamp-2 font-display text-base font-extrabold sm:mt-1 sm:text-lg" x-text="active.name"></h2>
+              <div class="mt-1.5 flex flex-wrap gap-1.5 sm:mt-2 sm:gap-2">
+                <span class="rounded-full px-2 py-0.5 text-[9.5px] font-extrabold uppercase tracking-wider sm:px-2.5 sm:py-1 sm:text-[10px]"
+                  :class="{
+                    'bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400': active.status === 'pending',
+                    'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400': active.status === 'approved',
+                    'bg-rose-100 text-rose-700 dark:bg-rose-500/15 dark:text-rose-400': active.status === 'rejected'
+                  }" x-text="active.status"></span>
+                <span class="rounded-full bg-zinc-100 px-2 py-0.5 text-[9.5px] font-extrabold uppercase tracking-wider text-zinc-500 dark:bg-white/8 sm:px-2.5 sm:py-1 sm:text-[10px]" x-text="categoryLabel(active.category)"></span>
+              </div>
+            </div>
+            <button @click="closeDetail()" class="grid h-8 w-8 shrink-0 place-items-center rounded-xl text-zinc-400 hover:bg-zinc-100 hover:text-zinc-800 dark:hover:bg-white/8 dark:hover:text-white sm:h-9 sm:w-9">
+              <i data-lucide="x" class="h-4 w-4"></i>
+            </button>
+          </div>
+
+          <div class="flex-1 overflow-y-auto px-4 py-4 sm:px-5 sm:py-5">
+            <template x-if="imagesOf(active).length > 0">
+              <div class="mb-4 sm:mb-5">
+                <div class="relative aspect-[16/10] overflow-hidden rounded-2xl border border-zinc-200 dark:border-white/10">
+                  <img :src="imagesOf(active)[galleryIndex] || imagesOf(active)[0]" class="h-full w-full object-cover" alt="" />
+                </div>
+                <div x-show="imagesOf(active).length > 1" class="mt-2 flex gap-2 overflow-x-auto pb-1 sm:mt-3">
+                  <template x-for="(img, idx) in imagesOf(active)" :key="idx">
+                    <button @click="galleryIndex = idx" class="h-12 w-12 shrink-0 overflow-hidden rounded-xl border-2 transition-all sm:h-14 sm:w-14"
+                      :class="galleryIndex === idx ? 'border-amber-400' : 'border-transparent opacity-70 hover:opacity-100'">
+                      <img :src="img" class="h-full w-full object-cover" alt="" />
+                    </button>
+                  </template>
+                </div>
+              </div>
+            </template>
+
+            <div class="rounded-2xl border border-zinc-200 bg-zinc-50/70 p-3.5 dark:border-white/10 dark:bg-white/[0.02] sm:p-4">
+              <p class="text-[10px] font-extrabold uppercase tracking-wider text-zinc-500">Asking price</p>
+              <div class="mt-1.5 flex flex-wrap items-end gap-2 sm:gap-3">
+                <p class="font-display text-xl font-extrabold text-amber-500 sm:text-2xl" x-text="money(active.price)"></p>
+                <p class="pb-0.5 text-[12px] font-bold text-zinc-400 line-through sm:pb-1 sm:text-[13px]" x-show="active.oldPrice > 0" x-text="active.oldPrice ? money(active.oldPrice) : ''"></p>
+                <span x-show="active.negotiable" class="mb-0.5 rounded-full bg-cyan-400/15 px-2 py-0.5 text-[9.5px] font-extrabold text-cyan-600 dark:text-cyan-400 sm:mb-1 sm:text-[10px]">Negotiable</span>
+              </div>
+            </div>
+
+            <div class="mt-4 grid grid-cols-2 gap-2.5 sm:mt-5 sm:gap-3">
+              <div class="rounded-xl border border-zinc-200 bg-white p-2.5 dark:border-white/10 dark:bg-white/[0.02] sm:p-3">
+                <p class="text-[9.5px] font-extrabold uppercase tracking-wider text-zinc-400 sm:text-[10px]">Brand</p>
+                <p class="mt-0.5 text-[12px] font-bold sm:mt-1 sm:text-[13px]" x-text="active.brand"></p>
+              </div>
+              <div class="rounded-xl border border-zinc-200 bg-white p-2.5 dark:border-white/10 dark:bg-white/[0.02] sm:p-3">
+                <p class="text-[9.5px] font-extrabold uppercase tracking-wider text-zinc-400 sm:text-[10px]">Condition</p>
+                <p class="mt-0.5 text-[12px] font-bold sm:mt-1 sm:text-[13px]" x-text="active.condition"></p>
+              </div>
+              <div class="col-span-2 rounded-xl border border-zinc-200 bg-white p-2.5 dark:border-white/10 dark:bg-white/[0.02] sm:p-3">
+                <p class="text-[9.5px] font-extrabold uppercase tracking-wider text-zinc-400 sm:text-[10px]">Location</p>
+                <p class="mt-0.5 text-[12px] font-bold sm:mt-1 sm:text-[13px]" x-text="active.location || '—'"></p>
+              </div>
+            </div>
+
+            <div class="mt-4 sm:mt-5">
+              <p class="text-[9.5px] font-extrabold uppercase tracking-wider text-zinc-400 sm:text-[10px]">Description</p>
+              <p class="mt-1.5 whitespace-pre-line text-[12.5px] leading-relaxed text-zinc-600 dark:text-zinc-300 sm:mt-2 sm:text-[13px]" x-text="active.description || 'No description provided.'"></p>
+            </div>
+
+            <template x-if="active.specs && active.specs.length > 0">
+              <div class="mt-4 sm:mt-5">
+                <p class="text-[9.5px] font-extrabold uppercase tracking-wider text-zinc-400 sm:text-[10px]">Specifications</p>
+                <ul class="mt-1.5 space-y-1 sm:mt-2 sm:space-y-1.5">
+                  <template x-for="(s, i) in active.specs" :key="i">
+                    <li class="flex items-start gap-2 text-[12px] font-semibold text-zinc-600 dark:text-zinc-300 sm:text-[12.5px]">
+                      <i data-lucide="check" class="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-500"></i>
+                      <span x-text="s"></span>
+                    </li>
+                  </template>
+                </ul>
+              </div>
+            </template>
+
+            <div x-show="active.seller" class="mt-4 rounded-2xl border border-cyan-400/25 bg-cyan-400/5 p-3.5 sm:mt-5 sm:p-4">
+              <p class="text-[9.5px] font-extrabold uppercase tracking-wider text-cyan-600 dark:text-cyan-400 sm:text-[10px]">Seller contact</p>
+              <div class="mt-2.5 space-y-1.5 text-[12px] sm:mt-3 sm:space-y-2 sm:text-[12.5px]">
+                <div class="flex justify-between gap-3"><span class="font-semibold text-zinc-500">Name</span><span class="truncate text-right font-bold" x-text="active.seller?.name || '—'"></span></div>
+                <div class="flex justify-between gap-3"><span class="font-semibold text-zinc-500">WhatsApp</span><span class="truncate text-right font-bold" x-text="active.seller?.phone || '—'"></span></div>
+                <div class="flex justify-between gap-3"><span class="font-semibold text-zinc-500">Email</span><span class="truncate text-right font-bold" x-text="active.seller?.email || '—'"></span></div>
+              </div>
+              <div class="mt-3 flex flex-wrap gap-2">
+                <a x-show="active.seller?.phone" :href="waLink('Hello ' + (active.seller?.name || '') + ', regarding your listing ' + active.id + ' (' + active.name + ') on BuyFromOc…')" target="_blank" rel="noopener"
+                  class="btn-press inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-3 py-2 text-[11px] font-extrabold text-white">
+                  <i data-lucide="message-circle" class="h-3 w-3"></i> Message seller
+                </a>
+                <button x-show="active.token" @click="copyText(editLinkFor(active.token))"
+                  class="btn-press inline-flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white px-3 py-2 text-[11px] font-bold text-zinc-600 dark:border-white/10 dark:bg-white/5 dark:text-zinc-300">
+                  <i data-lucide="link" class="h-3 w-3"></i> Copy link
+                </button>
+              </div>
+            </div>
+
+            <div x-show="active.status === 'rejected' && active.rejectionReason" class="mt-4 rounded-2xl border border-rose-400/30 bg-rose-400/8 p-3.5 sm:mt-5 sm:p-4">
+              <p class="text-[9.5px] font-extrabold uppercase tracking-wider text-rose-600 dark:text-rose-400 sm:text-[10px]">Rejection reason</p>
+              <p class="mt-1.5 text-[12px] leading-relaxed text-zinc-700 dark:text-zinc-300 sm:mt-2 sm:text-[12.5px]" x-text="active.rejectionReason"></p>
+            </div>
+
+            <div class="mt-4 rounded-2xl border border-zinc-200 bg-white p-3.5 dark:border-white/10 dark:bg-white/[0.02] sm:mt-5 sm:p-4">
+              <p class="text-[9.5px] font-extrabold uppercase tracking-wider text-zinc-400 sm:text-[10px]">Metadata</p>
+              <div class="mt-2.5 space-y-1.5 text-[11.5px] sm:mt-3 sm:space-y-2 sm:text-[12px]">
+                <div class="flex justify-between gap-3"><span class="font-semibold text-zinc-500">Created</span><span class="text-right font-bold" x-text="formatDate(active.createdAt)"></span></div>
+                <div class="flex justify-between gap-3"><span class="font-semibold text-zinc-500">Updated</span><span class="text-right font-bold" x-text="formatDate(active.updatedAt)"></span></div>
+                <div x-show="active.reviewedAt" class="flex justify-between gap-3"><span class="font-semibold text-zinc-500">Reviewed</span><span class="text-right font-bold" x-text="formatDate(active.reviewedAt)"></span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="safe-bottom border-t border-zinc-200 bg-zinc-50/80 px-4 py-3 dark:border-white/[0.08] dark:bg-white/[0.02] sm:px-5 sm:py-4">
+            <div class="flex flex-wrap gap-2">
+              <template x-if="active.status === 'pending'">
+                <div class="flex w-full gap-2">
+                  <button @click="approve(active); closeDetail()" class="btn-press flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 py-3 text-[12.5px] font-extrabold text-white shadow-lg shadow-emerald-500/25 sm:text-sm">
+                    <i data-lucide="check-circle-2" class="h-4 w-4"></i> Approve &amp; publish
+                  </button>
+                  <button @click="openReject(active)" class="btn-press flex flex-1 items-center justify-center gap-2 rounded-xl bg-rose-500 py-3 text-[12.5px] font-extrabold text-white hover:bg-rose-600 sm:text-sm">
+                    <i data-lucide="x-circle" class="h-4 w-4"></i> Reject
+                  </button>
+                </div>
+              </template>
+
+              <template x-if="active.status === 'approved'">
+                <div class="flex w-full gap-2">
+                  <button @click="toggleFeatured(active)" class="btn-press flex flex-1 items-center justify-center gap-2 rounded-xl border border-amber-400/60 bg-amber-400/10 py-3 text-[12.5px] font-extrabold text-amber-600 dark:text-amber-400 sm:text-sm">
+                    <i data-lucide="star" class="h-4 w-4" :class="active.featured ? 'fill-current' : ''"></i>
+                    <span x-text="active.featured ? 'Unfeature' : 'Feature'"></span>
+                  </button>
+                  <button x-show="active.source === 'seller'" @click="openReject(active)" class="btn-press grid h-12 w-12 shrink-0 place-items-center rounded-xl border border-rose-400/40 text-rose-500 hover:bg-rose-500 hover:text-white sm:w-14">
+                    <i data-lucide="x" class="h-4 w-4"></i>
+                  </button>
+                </div>
+              </template>
+
+              <template x-if="active.status === 'rejected'">
+                <div class="flex w-full gap-2">
+                  <button @click="approve(active); closeDetail()" class="btn-press flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 py-3 text-[12.5px] font-extrabold text-white sm:text-sm">
+                    <i data-lucide="undo" class="h-4 w-4"></i> Restore &amp; publish
+                  </button>
+                </div>
+              </template>
+
+              <button x-show="active.source === 'seller'" @click="deleteListing(active)" class="btn-press flex w-full items-center justify-center gap-2 rounded-xl border border-zinc-200 py-3 text-[11.5px] font-bold text-zinc-500 hover:border-rose-400/60 hover:text-rose-500 dark:border-white/10 sm:text-[12px]">
+                <i data-lucide="trash-2" class="h-3.5 w-3.5"></i> Delete permanently
+              </button>
+            </div>
+          </div>
+        </div>
+      </template>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       REJECT MODAL
+  ============================================================ -->
+  <div x-show="rejectOpen" x-cloak class="fixed inset-0 z-[90] flex items-end justify-center p-0 sm:items-center sm:p-4">
+    <div
+      x-show="rejectOpen"
+      x-transition:enter="transition ease-out duration-250"
+      x-transition:enter-start="opacity-0"
+      x-transition:enter-end="opacity-100"
+      @click="rejectOpen = false"
+      class="absolute inset-0 bg-zinc-950/70 backdrop-blur-sm"
+    ></div>
+
+    <div
+      x-show="rejectOpen"
+      x-transition:enter="transition ease-out duration-300"
+      x-transition:enter-start="opacity-0 translate-y-8 sm:scale-95"
+      x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+      class="relative w-full max-w-md rounded-t-3xl border border-zinc-200 bg-white p-5 shadow-2xl dark:border-white/10 dark:bg-ink-900 sm:rounded-3xl sm:p-6"
+    >
+      <div class="flex items-start gap-3">
+        <span class="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-rose-100 text-rose-600 dark:bg-rose-500/15 dark:text-rose-400 sm:h-11 sm:w-11">
+          <i data-lucide="x-circle" class="h-5 w-5"></i>
+        </span>
+        <div class="min-w-0 flex-1">
+          <h3 class="font-display text-base font-extrabold">Reject this listing</h3>
+          <p class="mt-0.5 truncate text-[11.5px] font-semibold text-zinc-500 sm:mt-1 sm:text-[12px]" x-text="rejectTarget?.name"></p>
+        </div>
+      </div>
+
+      <div class="mt-4 sm:mt-5">
+        <label class="mb-1.5 block text-[10.5px] font-extrabold uppercase tracking-wider text-zinc-500 sm:text-[11px]">Reason (sent to seller)</label>
+        <textarea x-model="rejectReason" rows="3" placeholder="e.g. Photos are blurry and the price is unrealistic…"
+          class="field w-full resize-none rounded-xl border border-zinc-200 bg-white px-3.5 py-2.5 text-[13px] font-medium dark:border-white/10 dark:bg-white/[0.04] sm:px-4 sm:py-3 sm:text-sm"></textarea>
+      </div>
+
+      <div class="mt-3 flex flex-wrap gap-1.5">
+        <template x-for="r in rejectPresets" :key="r">
+          <button @click="rejectReason = r" class="rounded-full border border-zinc-200 px-2.5 py-1 text-[10px] font-bold text-zinc-500 hover:border-rose-400/60 hover:text-rose-500 dark:border-white/10 dark:text-zinc-400 sm:px-3 sm:py-1.5 sm:text-[10.5px]" x-text="r"></button>
+        </template>
+      </div>
+
+      <div class="safe-bottom mt-5 flex gap-2 sm:mt-6">
+        <button @click="rejectOpen = false" class="btn-press flex-1 rounded-xl border border-zinc-200 py-3 text-[12.5px] font-bold text-zinc-600 dark:border-white/10 dark:text-zinc-300 sm:text-sm">
+          Cancel
+        </button>
+        <button @click="confirmReject()" class="btn-press flex-1 rounded-xl bg-rose-500 py-3 text-[12.5px] font-extrabold text-white hover:bg-rose-600 sm:text-sm">
+          Confirm rejection
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="border-t border-zinc-200/80 dark:border-white/[0.06] bg-zinc-100/70 dark:bg-ink-950">
+    <div class="mx-auto max-w-[100rem] px-3 py-6 sm:px-4 sm:py-8">
+      <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
+        <p class="text-[11px] text-zinc-500 sm:text-[11.5px]">
+          <span class="font-bold text-zinc-700 dark:text-zinc-300">OC Gadgets</span> · RC 1847392 · Admin Console v1.2
+        </p>
+        <p class="text-[10.5px] font-semibold text-zinc-500 sm:text-[11.5px]">
+          Storage: <code class="rounded bg-white px-1.5 py-0.5 font-mono text-[10px] dark:bg-white/10">bfo_listings</code>
+          · <code class="rounded bg-white px-1.5 py-0.5 font-mono text-[10px] dark:bg-white/10">bfo_settings</code>
+        </p>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- ============ SCRIPTS ============ -->
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script>
+  let iconTimer = null;
+  window.refreshIcons = function () {
+    if (window.lucide && typeof window.lucide.createIcons === 'function') {
+      try { window.lucide.createIcons(); } catch (e) {}
+    }
+  };
+  function scheduleIconRefresh() {
+    clearTimeout(iconTimer);
+    iconTimer = setTimeout(window.refreshIcons, 60);
+  }
+
+  function adminApp() {
+    return {
+      dark: true,
+      toggleTheme() {
+        this.dark = !this.dark;
+        document.documentElement.classList.toggle('dark', this.dark);
+        try { localStorage.setItem('bfo-theme', this.dark ? 'dark' : 'light'); } catch (e) {}
+        this.toast(this.dark ? 'Dark mode enabled' : 'Light mode enabled', 'info');
+      },
+
+      toasts: [],
+      toast(message, type) {
+        type = type || 'success';
+        const id = Date.now() + Math.random();
+        this.toasts.push({ id, message, type });
+        setTimeout(() => { this.toasts = this.toasts.filter(t => t.id !== id); }, 3800);
+      },
+
+      whatsapp: '2347038573480',
+      ADMIN_PASSWORD: 'ocadmin',
+      STORAGE_KEY: 'bfo_listings',
+      ACTIVITY_KEY: 'bfo_activity',
+      SETTINGS_KEY: 'bfo_settings',
+      AUTH_KEY: 'bfo_admin_auth',
+
+      authed: false,
+      password: '',
+      showPass: false,
+      loginError: '',
+
+      login() {
+        if (this.password === this.ADMIN_PASSWORD) {
+          this.authed = true;
+          this.loginError = '';
+          this.password = '';
+          try { sessionStorage.setItem(this.AUTH_KEY, '1'); } catch (e) {}
+          this.toast('Welcome back, Admin', 'success');
+          this.$nextTick(() => scheduleIconRefresh());
+        } else {
+          this.loginError = 'Incorrect password. Try again.';
+        }
+      },
+
+      logout() {
+        this.authed = false;
+        try { sessionStorage.removeItem(this.AUTH_KEY); } catch (e) {}
+        this.toast('Signed out', 'info');
+      },
+
+      currentTab: 'queue',
+      tabs: [
+        { id: 'queue', label: 'Review Queue', icon: 'clock' },
+        { id: 'live', label: 'Live', icon: 'badge-check' },
+        { id: 'rejected', label: 'Rejected', icon: 'x-circle' },
+        { id: 'all', label: 'All Products', icon: 'layers' },
+        { id: 'prices', label: 'Prices', icon: 'dollar-sign' },
+        { id: 'activity', label: 'Activity', icon: 'history' },
+      ],
+
+      search: '',
+      priceSearch: '',
+      categoryFilter: 'all',
+      sortBy: 'newest',
+      selectedIds: [],
+
+      listings: [],
+      activity: [],
+      seedProducts: [],
+
+      detailOpen: false,
+      active: null,
+      galleryIndex: 0,
+
+      rejectOpen: false,
+      rejectTarget: null,
+      rejectReason: '',
+      rejectPresets: [
+        'Photos are blurry or unclear',
+        'Price is unrealistic for condition',
+        'Description is too vague',
+        'Missing required specifications',
+        'Item appears to be a prohibited category',
+      ],
+
+      settingsForm: {
+        whatsapp: '2347038573480',
+        shippingThreshold: 500000,
+        deliveryFee: 15000,
+        services: {
+          repair: { price: 15000 },
+          gameselling: { price: 45000 },
+          download: { price: 5000 },
+        },
+        productPrices: {},
+        productOldPrices: {},
+      },
+
+      productsForPricing: [
+        { id:1, name:'iPhone 15 Pro Max 256GB', category:'phones', defaultPrice:1850000, defaultOldPrice:1980000 },
+        { id:2, name:'iPhone 13 Pro 128GB', category:'phones', defaultPrice:780000, defaultOldPrice:895000 },
+        { id:3, name:'Samsung Galaxy S24 Ultra 512GB', category:'phones', defaultPrice:1420000, defaultOldPrice:1560000 },
+        { id:4, name:'Google Pixel 8 Pro 256GB', category:'phones', defaultPrice:1050000, defaultOldPrice:0 },
+        { id:5, name:'iPad Air 5 (M1) 64GB Wi-Fi', category:'phones', defaultPrice:720000, defaultOldPrice:810000 },
+        { id:6, name:'Samsung Galaxy A55 5G 256GB', category:'phones', defaultPrice:465000, defaultOldPrice:520000 },
+        { id:7, name:'Toyota Camry 2019 XSE', category:'cars', defaultPrice:18500000, defaultOldPrice:20500000 },
+        { id:8, name:'Lexus RX 350 2017 F-Sport', category:'cars', defaultPrice:32000000, defaultOldPrice:0 },
+        { id:9, name:'Honda Accord 2020 Sport', category:'cars', defaultPrice:21000000, defaultOldPrice:22500000 },
+        { id:10, name:'Mercedes-Benz GLE 450 2021', category:'cars', defaultPrice:78000000, defaultOldPrice:84000000 },
+        { id:11, name:'Toyota Corolla 2018 LE', category:'cars', defaultPrice:14200000, defaultOldPrice:0 },
+        { id:12, name:'PlayStation 5 Slim Disc Edition', category:'gaming', defaultPrice:890000, defaultOldPrice:960000 },
+        { id:13, name:'PS5 DualSense Wireless Controller', category:'gaming', defaultPrice:95000, defaultOldPrice:115000 },
+        { id:14, name:'PS5 Digital Edition + 2 DualSense', category:'gaming', defaultPrice:820000, defaultOldPrice:940000 },
+        { id:15, name:'EA Sports FC 25 — PS5', category:'gaming', defaultPrice:78000, defaultOldPrice:92000 },
+        { id:16, name:'Meta Quest 3 128GB VR Headset', category:'gaming', defaultPrice:780000, defaultOldPrice:0 },
+        { id:17, name:'Apple AirPods Pro 2 (USB-C)', category:'accessories', defaultPrice:215000, defaultOldPrice:245000 },
+        { id:18, name:'Apple Watch Series 9 45mm GPS', category:'accessories', defaultPrice:420000, defaultOldPrice:465000 },
+        { id:19, name:'JBL Flip 6 Portable Speaker', category:'accessories', defaultPrice:135000, defaultOldPrice:155000 },
+        { id:20, name:'Anker 20,000mAh Power Bank 65W', category:'accessories', defaultPrice:48000, defaultOldPrice:58000 },
+      ],
+
+      loadSettings() {
+        try {
+          const raw = localStorage.getItem(this.SETTINGS_KEY);
+          if (raw) {
+            const s = JSON.parse(raw);
+            if (s.whatsapp) this.settingsForm.whatsapp = s.whatsapp;
+            if (typeof s.shippingThreshold === 'number') this.settingsForm.shippingThreshold = s.shippingThreshold;
+            if (typeof s.deliveryFee === 'number') this.settingsForm.deliveryFee = s.deliveryFee;
+            if (s.services) {
+              Object.keys(s.services).forEach(k => {
+                if (this.settingsForm.services[k] && typeof s.services[k].price === 'number') {
+                  this.settingsForm.services[k].price = s.services[k].price;
+                }
+              });
+            }
+            this.settingsForm.productPrices = s.productPrices || {};
+            this.settingsForm.productOldPrices = s.productOldPrices || {};
+          }
+        } catch (e) {}
+      },
+
+      saveSettings() {
+        try {
+          const payload = {
+            whatsapp: String(this.settingsForm.whatsapp || '').trim(),
+            shippingThreshold: Number(this.settingsForm.shippingThreshold) || 500000,
+            deliveryFee: Number(this.settingsForm.deliveryFee) || 15000,
+            services: {
+              repair: { price: Number(this.settingsForm.services.repair.price) || 0 },
+              gameselling: { price: Number(this.settingsForm.services.gameselling.price) || 0 },
+              download: { price: Number(this.settingsForm.services.download.price) || 0 },
+            },
+            productPrices: this.settingsForm.productPrices,
+            productOldPrices: this.settingsForm.productOldPrices,
+            updatedAt: new Date().toISOString(),
+          };
+          localStorage.setItem(this.SETTINGS_KEY, JSON.stringify(payload));
+          this.logActivity('other', 'Updated prices & business settings');
+          this.toast('✅ Settings saved — live site updated', 'success');
+        } catch (e) {
+          this.toast('Could not save settings', 'error');
+        }
+      },
+
+      resetSettings() {
+        if (!confirm('Reset all prices to defaults? This will NOT delete listings.')) return;
+        this.settingsForm.productPrices = {};
+        this.settingsForm.productOldPrices = {};
+        this.settingsForm.services.repair.price = 15000;
+        this.settingsForm.services.gameselling.price = 45000;
+        this.settingsForm.services.download.price = 5000;
+        this.settingsForm.shippingThreshold = 500000;
+        this.settingsForm.deliveryFee = 15000;
+        try { localStorage.removeItem(this.SETTINGS_KEY); } catch (e) {}
+        this.logActivity('other', 'Reset prices to defaults');
+        this.toast('Reset to defaults', 'info');
+      },
+
+      getProductPrice(id) {
+        const override = this.settingsForm.productPrices[String(id)];
+        if (typeof override === 'number' && override > 0) return override;
+        const def = this.productsForPricing.find(p => p.id === id);
+        return def ? def.defaultPrice : 0;
+      },
+
+      setProductPrice(id, val) {
+        const num = Number(val);
+        if (!isNaN(num) && num > 0) this.settingsForm.productPrices[String(id)] = num;
+        else delete this.settingsForm.productPrices[String(id)];
+      },
+
+      getProductOldPrice(id) {
+        const override = this.settingsForm.productOldPrices[String(id)];
+        if (typeof override === 'number') return override;
+        const def = this.productsForPricing.find(p => p.id === id);
+        return def ? def.defaultOldPrice : 0;
+      },
+
+      setProductOldPrice(id, val) {
+        const num = Number(val);
+        if (!isNaN(num) && num >= 0) this.settingsForm.productOldPrices[String(id)] = num;
+        else delete this.settingsForm.productOldPrices[String(id)];
+      },
+
+      get queue() { return this.listings.filter(l => l.status === 'pending'); },
+      get approvedListings() { return this.listings.filter(l => l.status === 'approved'); },
+      get rejectedListings() { return this.listings.filter(l => l.status === 'rejected'); },
+      get pendingCount() { return this.queue.length; },
+      get approvedCount() { return this.approvedListings.length + this.seedProducts.length; },
+      get rejectedCount() { return this.rejectedListings.length; },
+
+      get totalValue() {
+        const seedVal = this.seedProducts.reduce((s, p) => s + (p.price || 0), 0);
+        const sellerVal = this.listings
+          .filter(l => l.status === 'approved')
+          .reduce((s, l) => s + (l.price || 0), 0);
+        return seedVal + sellerVal;
+      },
+
+      get emptyMessage() {
+        const map = {
+          queue: 'No pending submissions right now. New seller listings will appear here automatically.',
+          live: 'No approved listings match your filters.',
+          rejected: 'No rejected listings. Good news!',
+          all: 'No products match your current search or filters.',
+        };
+        return map[this.currentTab] || 'Nothing to show.';
+      },
+
+      tabCount(id) {
+        if (id === 'queue') return this.pendingCount;
+        if (id === 'live') return this.seedProducts.length + this.approvedListings.length;
+        if (id === 'rejected') return this.rejectedCount;
+        if (id === 'all') return this.seedProducts.length + this.listings.length;
+        if (id === 'prices') {
+          return Object.keys(this.settingsForm.productPrices).length +
+                 Object.keys(this.settingsForm.productOldPrices).length;
+        }
+        if (id === 'activity') return this.activity.length;
+        return 0;
+      },
+
+      get visibleItems() {
+        let items = [];
+
+        if (this.currentTab === 'queue') {
+          items = this.listings.filter(l => l.status === 'pending').map(l => ({ ...l, _key: 'seller-' + l.id }));
+        } else if (this.currentTab === 'live') {
+          const seed = this.seedProducts.map(p => ({ ...p, source: 'marketplace', status: 'approved', _key: 'seed-' + p.id }));
+          const seller = this.approvedListings.map(l => ({ ...l, _key: 'seller-' + l.id }));
+          items = [...seller, ...seed];
+        } else if (this.currentTab === 'rejected') {
+          items = this.rejectedListings.map(l => ({ ...l, _key: 'seller-' + l.id }));
+        } else if (this.currentTab === 'all') {
+          const seed = this.seedProducts.map(p => ({ ...p, source: 'marketplace', status: 'approved', _key: 'seed-' + p.id }));
+          const seller = this.listings.map(l => ({ ...l, _key: 'seller-' + l.id }));
+          items = [...seller, ...seed];
+        }
+
+        const q = this.search.trim().toLowerCase();
+        if (q) {
+          items = items.filter(i => {
+            const hay = [i.name, i.brand, i.id, i.category, i.condition, (i.seller && i.seller.name) || '', (i.seller && i.seller.phone) || ''].join(' ').toLowerCase();
+            return hay.indexOf(q) !== -1;
+          });
+        }
+
+        if (this.categoryFilter !== 'all') items = items.filter(i => i.category === this.categoryFilter);
+
+        if (this.sortBy === 'newest') items.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+        else if (this.sortBy === 'oldest') items.sort((a, b) => new Date(a.createdAt || 0) - new Date(b.createdAt || 0));
+        else if (this.sortBy === 'priceHigh') items.sort((a, b) => (b.price || 0) - (a.price || 0));
+        else if (this.sortBy === 'priceLow') items.sort((a, b) => (a.price || 0) - (b.price || 0));
+        else if (this.sortBy === 'name') items.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+
+        return items;
+      },
+
+      money(n) { return '₦' + Number(n || 0).toLocaleString('en-NG'); },
+      waLink(msg) { return 'https://wa.me/' + this.whatsapp + '?text=' + encodeURIComponent(msg); },
+      editLinkFor(token) {
+        const base = location.origin + location.pathname.replace('admin-dashboard.html', 'seller-portal.html');
+        return base + '?edit=' + token;
+      },
+
+      formatDate(iso) {
+        if (!iso) return '—';
+        try {
+          const d = new Date(iso);
+          return d.toLocaleDateString('en-NG', { day: '2-digit', month: 'short', year: 'numeric' }) +
+            ' · ' + d.toLocaleTimeString('en-NG', { hour: '2-digit', minute: '2-digit' });
+        } catch (e) { return '—'; }
+      },
+
+      categoryLabel(id) {
+        const map = { phones:'Phones & Tablets', cars:'Cars & Automotive', gaming:'PS & Gaming Gear', accessories:'Accessories' };
+        return map[id] || id || 'Uncategorised';
+      },
+
+      primaryImage(item) {
+        if (item.images && item.images.length > 0) return item.images[0];
+        if (item.img) return item.img;
+        return '';
+      },
+
+      imagesOf(item) {
+        if (item.images && item.images.length > 0) return item.images;
+        if (item.img) return [item.img];
+        return [];
+      },
+
+      async copyText(text) {
+        try {
+          await navigator.clipboard.writeText(text);
+          this.toast('Copied to clipboard', 'success');
+        } catch (e) {
+          this.toast('Copy failed — select manually', 'error');
+        }
+      },
+
+      loadListings() {
+        try {
+          const raw = localStorage.getItem(this.STORAGE_KEY);
+          this.listings = raw ? JSON.parse(raw) : [];
+        } catch (e) { this.listings = []; }
+      },
+      saveListings() {
+        try { localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.listings)); }
+        catch (e) { this.toast('Storage full — could not save', 'error'); }
+      },
+
+      loadActivity() {
+        try {
+          const raw = localStorage.getItem(this.ACTIVITY_KEY);
+          this.activity = raw ? JSON.parse(raw) : [];
+        } catch (e) { this.activity = []; }
+      },
+      saveActivity() {
+        try { localStorage.setItem(this.ACTIVITY_KEY, JSON.stringify(this.activity.slice(0, 60))); } catch (e) {}
+      },
+      logActivity(kind, detail) {
+        this.activity.unshift({ id: Date.now() + Math.random(), kind, detail, at: new Date().toISOString() });
+        this.activity = this.activity.slice(0, 60);
+        this.saveActivity();
+      },
+
+      approve(item) {
+        const idx = this.listings.findIndex(l => l.id === item.id);
+        if (idx === -1) { this.toast('Marketplace item — nothing to approve', 'info'); return; }
+        this.listings[idx].status = 'approved';
+        this.listings[idx].reviewedAt = new Date().toISOString();
+        this.listings[idx].reviewedBy = 'Admin';
+        this.listings[idx].rejectionReason = '';
+        this.saveListings();
+        this.selectedIds = this.selectedIds.filter(id => id !== item.id);
+        this.logActivity('approve', 'Approved ' + item.id + ' — ' + item.name);
+        this.toast('Approved & published: ' + item.name, 'success');
+      },
+
+      openReject(item) {
+        if (!item) return;
+        if (!this.listings.find(l => l.id === item.id)) {
+          this.toast('Marketplace items cannot be rejected', 'info');
+          return;
+        }
+        this.rejectTarget = item;
+        this.rejectReason = '';
+        this.rejectOpen = true;
+      },
+
+      confirmReject() {
+        if (!this.rejectReason.trim()) { this.toast('Please enter a rejection reason', 'error'); return; }
+        const idx = this.listings.findIndex(l => l.id === this.rejectTarget.id);
+        if (idx === -1) { this.rejectOpen = false; return; }
+        this.listings[idx].status = 'rejected';
+        this.listings[idx].rejectionReason = this.rejectReason.trim();
+        this.listings[idx].reviewedAt = new Date().toISOString();
+        this.listings[idx].reviewedBy = 'Admin';
+        this.saveListings();
+        this.logActivity('reject', 'Rejected ' + this.rejectTarget.id + ' — ' + this.rejectTarget.name);
+        this.toast('Listing rejected', 'info');
+        this.rejectOpen = false;
+        this.detailOpen = false;
+        this.rejectTarget = null;
+        this.rejectReason = '';
+      },
+
+      toggleFeatured(item) {
+        const idx = this.listings.findIndex(l => l.id === item.id);
+        if (idx !== -1) {
+          this.listings[idx].featured = !this.listings[idx].featured;
+          this.saveListings();
+          this.logActivity('feature', (this.listings[idx].featured ? 'Featured ' : 'Unfeatured ') + item.id);
+          this.toast(this.listings[idx].featured ? 'Added to features' : 'Removed from features', 'success');
+          if (this.active && this.active.id === item.id) {
+            this.active = { ...this.active, featured: this.listings[idx].featured };
+          }
+        } else {
+          this.logActivity('feature', 'Feature toggled for marketplace item ' + item.id);
+          this.toast('Marketplace items always visible (demo)', 'info');
+        }
+      },
+
+      deleteListing(item) {
+        if (!confirm('Permanently delete ' + item.id + '? Cannot be undone.')) return;
+        this.listings = this.listings.filter(l => l.id !== item.id);
+        this.saveListings();
+        this.logActivity('other', 'Deleted ' + item.id + ' — ' + item.name);
+        this.detailOpen = false;
+        this.active = null;
+        this.toast('Listing deleted', 'info');
+      },
+
+      bulkApprove() {
+        if (this.selectedIds.length === 0) return;
+        let count = 0;
+        this.listings.forEach(l => {
+          if (this.selectedIds.indexOf(l.id) !== -1 && l.status === 'pending') {
+            l.status = 'approved';
+            l.reviewedAt = new Date().toISOString();
+            l.reviewedBy = 'Admin';
+            l.rejectionReason = '';
+            count++;
+          }
+        });
+        this.saveListings();
+        this.logActivity('approve', 'Bulk approved ' + count + ' listing(s)');
+        this.toast(count + ' listings approved', 'success');
+        this.selectedIds = [];
+      },
+
+      openDetail(item) {
+        this.active = item;
+        this.galleryIndex = 0;
+        this.detailOpen = true;
+        document.body.style.overflow = 'hidden';
+        this.$nextTick(() => scheduleIconRefresh());
+      },
+      closeDetail() {
+        this.detailOpen = false;
+        document.body.style.overflow = '';
+        this.active = null;
+      },
+
+      exportJSON() {
+        const payload = {
+          exportedAt: new Date().toISOString(),
+          totalListings: this.listings.length,
+          marketplaceProducts: this.seedProducts.length,
+          settings: this.settingsForm,
+          listings: this.listings,
+        };
+        const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'buyfromoc-export-' + Date.now() + '.json';
+        a.click();
+        URL.revokeObjectURL(url);
+        this.logActivity('other', 'Exported listings + settings');
+        this.toast('Export downloaded', 'success');
+      },
+
+      seedDemo() {
+        const now = Date.now();
+        const demo = [
+          {
+            id:'LST-DEMO01', token:'tok_demo_a1b2c3d4e5f6', status:'pending', category:'phones',
+            name:'iPhone 12 Pro Max 256GB Pacific Blue', brand:'Apple', condition:'Pre-owned · Excellent',
+            description:'Used for 2 years, always in a case with screen protector. Battery health 89%. Original box + cable included.',
+            location:'Lekki Phase 1, Lagos', images:[], price:620000, oldPrice:750000, negotiable:true,
+            specs:['Battery health 89%','Face ID working','Original box + cable','Free spare case'],
+            seller:{ name:'Adaeze Okonkwo', phone:'0801 234 5678', email:'adaeze@example.com' },
+            createdAt:new Date(now - 1000*60*42).toISOString(),
+            updatedAt:new Date(now - 1000*60*42).toISOString(),
+            featured:false, views:0, source:'seller',
+          },
+          {
+            id:'LST-DEMO02', token:'tok_demo_g7h8i9j0k1l2', status:'pending', category:'cars',
+            name:'Toyota Highlander 2015 Limited AWD', brand:'Toyota', condition:'Pre-owned · Good',
+            description:'Family SUV, full Toyota service history, duty paid, registration current.',
+            location:'Ikeja, Lagos', images:[], price:24500000, oldPrice:0, negotiable:true,
+            specs:['3.5L V6 · 270hp','AWD automatic','112,400 km mileage','Full service history'],
+            seller:{ name:'Emeka Nwosu', phone:'0803 987 6543', email:'emeka.n@example.com' },
+            createdAt:new Date(now - 1000*60*60*5).toISOString(),
+            updatedAt:new Date(now - 1000*60*60*5).toISOString(),
+            featured:false, views:0, source:'seller',
+          },
+          {
+            id:'LST-DEMO03', token:'tok_demo_m3n4o5p6q7r8', status:'pending', category:'gaming',
+            name:'PlayStation 5 Disc Edition + 3 Games', brand:'Sony', condition:'Pre-owned · Excellent',
+            description:'Bought in December, barely used. Two DualSense controllers + 3 physical games.',
+            location:'Yaba, Lagos', images:[], price:720000, oldPrice:0, negotiable:true,
+            specs:['1TB disc edition','2 controllers','3 games included','Original box'],
+            seller:{ name:'Tunde Bakare', phone:'0812 345 6789', email:'' },
+            createdAt:new Date(now - 1000*60*60*18).toISOString(),
+            updatedAt:new Date(now - 1000*60*60*18).toISOString(),
+            featured:false, views:0, source:'seller',
+          },
+          {
+            id:'LST-DEMO04', token:'tok_demo_s9t0u1v2w3x4', status:'approved', category:'accessories',
+            name:'Apple AirPods Max Space Grey', brand:'Apple', condition:'Pre-owned · Excellent',
+            description:'Barely used AirPods Max, always in Smart Case. Excellent condition.',
+            location:'Victoria Island, Lagos', images:[], price:480000, oldPrice:620000, negotiable:false,
+            specs:['Active Noise Cancellation','Spatial Audio','Smart Case included'],
+            seller:{ name:'Ngozi Adichie', phone:'0805 111 2233', email:'ngozi@example.com' },
+            createdAt:new Date(now - 1000*60*60*48).toISOString(),
+            updatedAt:new Date(now - 1000*60*60*48).toISOString(),
+            reviewedAt:new Date(now - 1000*60*60*20).toISOString(),
+            reviewedBy:'Admin', featured:true, views:34, source:'seller',
+          },
+          {
+            id:'LST-DEMO05', token:'tok_demo_y5z6a7b8c9d0', status:'rejected', category:'phones',
+            name:'Samsung Galaxy S21 128GB', brand:'Samsung', condition:'Pre-owned · Fair',
+            description:'Phone works but has cracked back glass and battery drains fast.',
+            location:'Surulere, Lagos', images:[], price:250000, oldPrice:0, negotiable:true,
+            specs:['Cracked back glass','Battery issues','Screen burn-in'],
+            seller:{ name:'Unknown Seller', phone:'0900 000 0000', email:'' },
+            createdAt:new Date(now - 1000*60*60*72).toISOString(),
+            updatedAt:new Date(now - 1000*60*60*72).toISOString(),
+            reviewedAt:new Date(now - 1000*60*60*60).toISOString(),
+            reviewedBy:'Admin',
+            rejectionReason:'Photos are blurry or unclear — please re-upload clear photos.',
+            featured:false, views:0, source:'seller',
+          },
+        ];
+
+        let added = 0;
+        demo.forEach(d => {
+          if (!this.listings.find(l => l.id === d.id)) {
+            this.listings.push(d);
+            added++;
+          }
+        });
+
+        this.saveListings();
+        if (added > 0) {
+          this.logActivity('other', 'Seeded ' + added + ' demo submission(s)');
+          this.toast(added + ' demo submissions added', 'success');
+        } else {
+          this.toast('Demo submissions already present', 'info');
+        }
+      },
+
+      buildSeedProducts() {
+        return [
+          { id:'MKT-001', name:'iPhone 15 Pro Max 256GB', brand:'Apple', category:'phones', price:1850000, oldPrice:1980000, condition:'Brand New', emoji:'📱', stock:7, featured:true, img:'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=900&q=70', g1:'#3f3f46', g2:'#18181b', specs:['6.7" ProMotion','A17 Pro'], description:'Flagship iPhone.', location:'VI Store', createdAt:'2025-01-15T09:00:00.000Z' },
+          { id:'MKT-002', name:'iPhone 13 Pro 128GB', brand:'Apple', category:'phones', price:780000, oldPrice:895000, condition:'Pre-owned · Excellent', emoji:'📱', stock:3, featured:false, img:'https://images.unsplash.com/photo-1632661674596-df8be070a5c5?auto=format&fit=crop&w=900&q=70', g1:'#52525b', g2:'#27272a', specs:['6.1" XDR','Battery 91%'], description:'Certified pre-owned.', location:'VI Store', createdAt:'2025-01-14T09:00:00.000Z' },
+          { id:'MKT-003', name:'Samsung Galaxy S24 Ultra 512GB', brand:'Samsung', category:'phones', price:1420000, oldPrice:1560000, condition:'Brand New', emoji:'📱', stock:6, featured:false, img:'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=900&q=70', g1:'#312e81', g2:'#1e1b4b', specs:['6.8" QHD+','Snapdragon 8 Gen 3'], description:'Samsung flagship.', location:'VI Store', createdAt:'2025-01-13T09:00:00.000Z' },
+          { id:'MKT-004', name:'Google Pixel 8 Pro 256GB', brand:'Google', category:'phones', price:1050000, oldPrice:0, condition:'Brand New', emoji:'📱', stock:4, featured:false, img:'https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=900&q=70', g1:'#065f46', g2:'#022c22', specs:['6.7" LTPO OLED','Tensor G3'], description:'Pixel 8 Pro.', location:'VI Store', createdAt:'2025-01-12T09:00:00.000Z' },
+          { id:'MKT-005', name:'iPad Air 5 (M1) 64GB Wi-Fi', brand:'Apple', category:'phones', price:720000, oldPrice:810000, condition:'Brand New', emoji:'📲', stock:5, featured:false, img:'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?auto=format&fit=crop&w=900&q=70', g1:'#334155', g2:'#0f172a', specs:['10.9" Retina','M1 chip'], description:'iPad Air with M1.', location:'VI Store', createdAt:'2025-01-11T09:00:00.000Z' },
+          { id:'MKT-006', name:'Samsung Galaxy A55 5G 256GB', brand:'Samsung', category:'phones', price:465000, oldPrice:520000, condition:'Brand New', emoji:'📱', stock:12, featured:false, img:'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=900&q=70', g1:'#0e7490', g2:'#164e63', specs:['6.6" AMOLED','Exynos 1480'], description:'Best value Samsung.', location:'VI Store', createdAt:'2025-01-10T09:00:00.000Z' },
+          { id:'MKT-007', name:'Toyota Camry 2019 XSE', brand:'Toyota', category:'cars', price:18500000, oldPrice:20500000, condition:'Pre-owned · Certified', emoji:'🚘', stock:2, featured:true, img:'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?auto=format&fit=crop&w=900&q=70', g1:'#1e293b', g2:'#0f172a', specs:['2.5L · 203hp','68,400 km'], description:'Certified Camry XSE.', location:'VI Yard', createdAt:'2025-01-09T09:00:00.000Z' },
+          { id:'MKT-008', name:'Lexus RX 350 2017 F-Sport', brand:'Lexus', category:'cars', price:32000000, oldPrice:0, condition:'Pre-owned · Certified', emoji:'🚙', stock:1, featured:false, img:'https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=900&q=70', g1:'#3b0764', g2:'#1e1b4b', specs:['3.5L V6 · 295hp','AWD'], description:'Accident-free Lexus.', location:'VI Yard', createdAt:'2025-01-08T09:00:00.000Z' },
+          { id:'MKT-009', name:'Honda Accord 2020 Sport', brand:'Honda', category:'cars', price:21000000, oldPrice:22500000, condition:'Pre-owned · Certified', emoji:'🚗', stock:2, featured:false, img:'https://images.unsplash.com/photo-1590362891991-f776e747a588?auto=format&fit=crop&w=900&q=70', g1:'#0f766e', g2:'#134e4a', specs:['1.5L Turbo','54,700 km'], description:'Sporty Accord.', location:'VI Yard', createdAt:'2025-01-07T09:00:00.000Z' },
+          { id:'MKT-010', name:'Mercedes-Benz GLE 450 2021', brand:'Mercedes-Benz', category:'cars', price:78000000, oldPrice:84000000, condition:'Pre-owned · Certified', emoji:'🚙', stock:1, featured:false, img:'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=900&q=70', g1:'#1c1917', g2:'#0c0a09', specs:['3.0L Inline-6','4MATIC AWD'], description:'Full option GLE.', location:'VI Yard', createdAt:'2025-01-06T09:00:00.000Z' },
+          { id:'MKT-011', name:'Toyota Corolla 2018 LE', brand:'Toyota', category:'cars', price:14200000, oldPrice:0, condition:'Pre-owned · Certified', emoji:'🚗', stock:3, featured:false, img:'https://images.unsplash.com/photo-1550355291-bbee04a92027?auto=format&fit=crop&w=900&q=70', g1:'#1f2937', g2:'#111827', specs:['1.8L · 132hp','81,200 km'], description:'Perfect first car.', location:'VI Yard', createdAt:'2025-01-05T09:00:00.000Z' },
+          { id:'MKT-012', name:'PlayStation 5 Slim Disc Edition', brand:'Sony', category:'gaming', price:890000, oldPrice:960000, condition:'Brand New', emoji:'🎮', stock:8, featured:false, img:'https://images.unsplash.com/photo-1606813907291-d86efa9b94db?auto=format&fit=crop&w=900&q=70', g1:'#1e40af', g2:'#0f172a', specs:['1TB SSD','4K Blu-ray'], description:'Sealed PS5 Slim.', location:'VI Store', createdAt:'2025-01-04T09:00:00.000Z' },
+          { id:'MKT-013', name:'PS5 DualSense Wireless Controller', brand:'Sony', category:'gaming', price:95000, oldPrice:115000, condition:'Brand New', emoji:'🕹️', stock:24, featured:false, img:'https://images.unsplash.com/photo-1600080972464-8e5f35f63d08?auto=format&fit=crop&w=900&q=70', g1:'#334155', g2:'#0f172a', specs:['Haptic feedback','Adaptive triggers'], description:'Genuine Sony.', location:'VI Store', createdAt:'2025-01-03T09:00:00.000Z' },
+          { id:'MKT-014', name:'PS5 Digital Edition + 2 DualSense', brand:'Sony', category:'gaming', price:820000, oldPrice:940000, condition:'Brand New', emoji:'🎮', stock:4, featured:false, img:'https://images.unsplash.com/photo-1607853202273-797f1c22a38e?auto=format&fit=crop&w=900&q=70', g1:'#1e3a8a', g2:'#111827', specs:['825GB SSD','2 controllers'], description:'Perfect bundle.', location:'VI Store', createdAt:'2025-01-02T09:00:00.000Z' },
+          { id:'MKT-015', name:'EA Sports FC 25 — PS5', brand:'EA Sports', category:'gaming', price:78000, oldPrice:92000, condition:'Brand New', emoji:'⚽', stock:30, featured:false, img:'https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?auto=format&fit=crop&w=900&q=70', g1:'#166534', g2:'#052e16', specs:['Physical disc','Sealed'], description:'Latest EA FC.', location:'VI Store', createdAt:'2025-01-01T09:00:00.000Z' },
+          { id:'MKT-016', name:'Meta Quest 3 128GB VR Headset', brand:'Meta', category:'gaming', price:780000, oldPrice:0, condition:'Brand New', emoji:'🥽', stock:5, featured:false, img:'https://images.unsplash.com/photo-1622979135225-d2ba269cf1ac?auto=format&fit=crop&w=900&q=70', g1:'#4c1d95', g2:'#1e1b4b', specs:['Mixed reality','Snapdragon XR2'], description:'VR headset.', location:'VI Store', createdAt:'2024-12-30T09:00:00.000Z' },
+          { id:'MKT-017', name:'Apple AirPods Pro 2 (USB-C)', brand:'Apple', category:'accessories', price:215000, oldPrice:245000, condition:'Brand New', emoji:'🎧', stock:18, featured:false, img:'https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?auto=format&fit=crop&w=900&q=70', g1:'#3f3f46', g2:'#18181b', specs:['ANC','USB-C case'], description:'AirPods Pro 2.', location:'VI Store', createdAt:'2024-12-29T09:00:00.000Z' },
+          { id:'MKT-018', name:'Apple Watch Series 9 45mm GPS', brand:'Apple', category:'accessories', price:420000, oldPrice:465000, condition:'Brand New', emoji:'⌚', stock:9, featured:false, img:'https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=900&q=70', g1:'#1f2937', g2:'#0b1220', specs:['45mm','S9 SiP'], description:'Series 9.', location:'VI Store', createdAt:'2024-12-28T09:00:00.000Z' },
+          { id:'MKT-019', name:'JBL Flip 6 Portable Speaker', brand:'JBL', category:'accessories', price:135000, oldPrice:155000, condition:'Brand New', emoji:'🔊', stock:15, featured:false, img:'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&w=900&q=70', g1:'#7c2d12', g2:'#1c1917', specs:['2-way speaker','IP67'], description:'JBL Flip 6.', location:'VI Store', createdAt:'2024-12-27T09:00:00.000Z' },
+          { id:'MKT-020', name:'Anker 20,000mAh Power Bank 65W', brand:'Anker', category:'accessories', price:48000, oldPrice:58000, condition:'Brand New', emoji:'🔋', stock:40, featured:false, img:'https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?auto=format&fit=crop&w=900&q=70', g1:'#0f766e', g2:'#052e2b', specs:['20,000mAh','65W output'], description:'Power bank.', location:'VI Store', createdAt:'2024-12-26T09:00:00.000Z' },
+        ];
+      },
+
+      init() {
+        let saved = null;
+        try { saved = localStorage.getItem('bfo-theme'); } catch (e) {}
+        this.dark = saved ? saved === 'dark' : true;
+        document.documentElement.classList.toggle('dark', this.dark);
+
+        try {
+          if (sessionStorage.getItem(this.AUTH_KEY) === '1') this.authed = true;
+        } catch (e) {}
+
+        this.seedProducts = this.buildSeedProducts();
+        this.loadListings();
+        this.loadActivity();
+        this.loadSettings();
+
+        if (this.listings.length === 0) {
+          setTimeout(() => {
+            this.seedDemo();
+            this.toast('Welcome! Demo submissions loaded.', 'info');
+          }, 400);
+        }
+
+        window.addEventListener('storage', (e) => {
+          if (e.key === this.STORAGE_KEY) {
+            this.loadListings();
+            this.toast('Listings synced from another tab', 'info');
+          }
+          if (e.key === this.ACTIVITY_KEY) this.loadActivity();
+          if (e.key === this.SETTINGS_KEY) this.loadSettings();
+        });
+
+        window.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') {
+            if (this.detailOpen) this.closeDetail();
+            if (this.rejectOpen) this.rejectOpen = false;
+          }
+        });
+
+        this.$nextTick(() => scheduleIconRefresh());
+        setTimeout(scheduleIconRefresh, 400);
+        setTimeout(scheduleIconRefresh, 1000);
+      },
+    };
+  }
+
+  document.addEventListener('DOMContentLoaded', () => scheduleIconRefresh());
+</script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sell on BuyFromOc — OCHub Seller Portal | OC Gadgets</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['"Plus Jakarta Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+          display: ['Sora', '"Plus Jakarta Sans"', 'sans-serif'],
+        },
+        colors: {
+          ink: { 950:'#07090e', 900:'#0b0e15', 800:'#12161f', 700:'#1b212d', 600:'#252c3a' },
+        },
+        keyframes: {
+          popIn: { '0%':{opacity:'0',transform:'translateY(14px) scale(.96)'}, '100%':{opacity:'1',transform:'translateY(0) scale(1)'} },
+          floaty: { '0%,100%':{transform:'translateY(0)'}, '50%':{transform:'translateY(-10px)'} },
+        },
+        animation: {
+          popIn: 'popIn .35s cubic-bezier(.2,.9,.3,1.2) both',
+          floaty: 'floaty 7s ease-in-out infinite',
+        },
+      },
+    },
+  };
+</script>
+
+<script>
+  (function () {
+    try {
+      var t = localStorage.getItem('bfo-theme');
+      if (t === 'light') document.documentElement.classList.remove('dark');
+      else document.documentElement.classList.add('dark');
+    } catch (e) { document.documentElement.classList.add('dark'); }
+  })();
+</script>
+
+<style>
+  [x-cloak] { display: none !important; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif; }
+  ::selection { background: rgba(251,191,36,.35); }
+
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(140,140,155,.35); border-radius: 999px;
+    border: 3px solid transparent; background-clip: content-box;
+  }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(251,191,36,.55); background-clip: content-box; }
+
+  .glass { backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); }
+
+  .field { transition: border-color .3s ease, box-shadow .3s ease, background-color .3s ease; }
+  .field:focus { outline: none; border-color: rgba(251,191,36,.7); box-shadow: 0 0 0 4px rgba(251,191,36,.14); }
+
+  .btn-press { transition: transform .18s cubic-bezier(.2,.8,.2,1), box-shadow .3s ease, background-color .3s ease, color .3s ease, border-color .3s ease; }
+  .btn-press:hover { transform: translateY(-1px); }
+  .btn-press:active { transform: translateY(0) scale(.975); }
+
+  .step-line { transition: background-color .5s ease; }
+  .card-preview { transition: transform .5s cubic-bezier(.2,.8,.2,1), box-shadow .5s ease; }
+  .card-preview:hover { transform: translateY(-4px); }
+
+  .dropzone { transition: border-color .3s ease, background-color .3s ease, transform .3s ease; }
+  .dropzone.drag { border-color: rgba(251,191,36,.8); background: rgba(251,191,36,.08); transform: scale(1.01); }
+
+  .grid-bg {
+    background-image:
+      linear-gradient(to right, currentColor 1px, transparent 1px),
+      linear-gradient(to bottom, currentColor 1px, transparent 1px);
+    background-size: 46px 46px;
+  }
+</style>
+</head>
+
+<body
+  x-data="sellerApp()"
+  x-init="init()"
+  class="min-h-screen bg-zinc-50 text-zinc-900 dark:bg-ink-950 dark:text-zinc-100 antialiased transition-colors duration-500 overflow-x-hidden"
+>
+
+<!-- ============ TOASTS ============ -->
+<div class="fixed top-20 right-4 z-[100] flex flex-col gap-2.5 w-[calc(100vw-2rem)] max-w-sm pointer-events-none">
+  <template x-for="t in toasts" :key="t.id">
+    <div
+      x-transition:enter="transition ease-out duration-300"
+      x-transition:enter-start="opacity-0 translate-x-8 scale-95"
+      x-transition:enter-end="opacity-100 translate-x-0 scale-100"
+      x-transition:leave="transition ease-in duration-200"
+      x-transition:leave-start="opacity-100"
+      x-transition:leave-end="opacity-0 translate-x-8"
+      class="pointer-events-auto flex items-start gap-3 rounded-2xl border border-zinc-200/80 dark:border-white/10 bg-white/95 dark:bg-ink-800/95 glass px-4 py-3 shadow-2xl shadow-black/10 dark:shadow-black/50"
+    >
+      <span
+        class="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full"
+        :class="{
+          'bg-emerald-100 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400': t.type === 'success',
+          'bg-amber-100 text-amber-600 dark:bg-amber-500/15 dark:text-amber-400': t.type === 'info',
+          'bg-rose-100 text-rose-600 dark:bg-rose-500/15 dark:text-rose-400': t.type === 'error'
+        }"
+      >
+        <i data-lucide="check" class="h-4 w-4" x-show="t.type === 'success'"></i>
+        <i data-lucide="info" class="h-4 w-4" x-show="t.type === 'info'"></i>
+        <i data-lucide="alert-triangle" class="h-4 w-4" x-show="t.type === 'error'"></i>
+      </span>
+      <p class="flex-1 text-sm font-medium leading-snug pt-1" x-text="t.message"></p>
+      <button @click="toasts = toasts.filter(x => x.id !== t.id)" class="text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200">
+        <i data-lucide="x" class="h-4 w-4"></i>
+      </button>
+    </div>
+  </template>
+</div>
+
+<!-- ============ HEADER ============ -->
+<header class="sticky top-0 z-40 glass border-b border-zinc-200/80 dark:border-white/[0.06] bg-white/80 dark:bg-ink-950/70">
+  <div class="mx-auto flex h-16 max-w-7xl items-center gap-3 px-4">
+    <a href="index.html" class="group flex shrink-0 items-center gap-2.5">
+      <span class="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-amber-400 via-amber-500 to-cyan-400 text-ink-950 shadow-lg shadow-amber-500/25 transition-transform duration-300 group-hover:scale-105 group-hover:rotate-3">
+        <i data-lucide="zap" class="h-5 w-5"></i>
+      </span>
+      <span class="leading-none">
+        <span class="block font-display text-lg font-extrabold tracking-tight">BuyFrom<span class="text-amber-500">Oc</span></span>
+        <span class="mt-0.5 block text-[9px] font-semibold uppercase tracking-[0.2em] text-zinc-500">Seller Portal · OCHub</span>
+      </span>
+    </a>
+
+    <div class="flex-1"></div>
+
+    <button @click="view = 'track'; lookupToken()" class="btn-press hidden items-center gap-2 rounded-xl border border-zinc-200 bg-white/70 px-4 py-2.5 text-sm font-bold text-zinc-700 hover:border-cyan-400/70 hover:text-cyan-600 dark:border-white/10 dark:bg-white/5 dark:text-zinc-200 dark:hover:border-cyan-400/50 dark:hover:text-cyan-400 sm:flex">
+      <i data-lucide="search" class="h-4 w-4"></i> Track submission
+    </button>
+
+    <button
+      @click="toggleTheme()"
+      class="btn-press grid h-10 w-10 place-items-center rounded-xl border border-zinc-200 bg-white/70 text-zinc-600 hover:border-amber-400/60 hover:text-amber-500 dark:border-white/10 dark:bg-white/5 dark:text-zinc-300"
+    >
+      <i data-lucide="moon" class="h-[18px] w-[18px]" x-show="dark"></i>
+      <i data-lucide="sun" class="h-[18px] w-[18px]" x-show="!dark"></i>
+    </button>
+
+    <a :href="waLink('Hello OC Gadgets 👋 I need help with a seller submission.')" target="_blank" rel="noopener" class="btn-press hidden items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-emerald-500/25 sm:flex">
+      <i data-lucide="message-circle" class="h-4 w-4"></i> Support
+    </a>
+  </div>
+</header>
+
+<!-- ============ MAIN ============ -->
+<main class="relative">
+
+  <!-- ---------- WIZARD VIEW ---------- -->
+  <div x-show="view === 'wizard'">
+    <!-- Hero -->
+    <section class="relative overflow-hidden">
+      <div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <div class="absolute -left-40 -top-56 h-[34rem] w-[34rem] rounded-full bg-amber-400/25 blur-[130px] dark:bg-amber-500/10"></div>
+        <div class="absolute -bottom-56 -right-32 h-[30rem] w-[30rem] rounded-full bg-cyan-400/25 blur-[130px] dark:bg-cyan-500/10"></div>
+        <div class="grid-bg absolute inset-0 text-zinc-900 opacity-[0.035] dark:text-white dark:opacity-[0.05]"></div>
+      </div>
+
+      <div class="mx-auto max-w-7xl px-4 py-12 lg:py-16">
+        <div class="max-w-3xl">
+          <div class="inline-flex items-center gap-2 rounded-full border border-amber-400/40 bg-amber-400/10 px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.16em] text-amber-600 dark:text-amber-400">
+            <span class="relative flex h-1.5 w-1.5">
+              <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-500 opacity-75"></span>
+              <span class="relative inline-flex h-1.5 w-1.5 rounded-full bg-amber-500"></span>
+            </span>
+            Free listing · No commission on first sale
+          </div>
+
+          <h1 class="mt-6 font-display text-3xl font-extrabold leading-[1.1] tracking-tight sm:text-4xl lg:text-5xl">
+            Sell your device, car or gadget on
+            <span class="bg-gradient-to-r from-amber-400 via-amber-500 to-cyan-400 bg-clip-text text-transparent">BuyFromOc</span>
+          </h1>
+          <p class="mt-5 max-w-2xl text-[15px] leading-relaxed text-zinc-600 dark:text-zinc-400">
+            Submit once and get a private edit link. Our team reviews every listing within 24 hours
+            before it goes live on OCHub — seen by thousands of verified buyers.
+          </p>
+
+          <div class="mt-8 flex flex-wrap gap-3">
+            <a href="#submit" class="btn-press inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-amber-400 to-amber-500 px-6 py-3.5 text-sm font-extrabold text-ink-950 shadow-xl shadow-amber-500/25">
+              <i data-lucide="plus-circle" class="h-4 w-4"></i> Start a new listing
+            </a>
+            <button @click="view = 'track'; lookupToken()" class="btn-press inline-flex items-center gap-2 rounded-2xl border border-zinc-300 bg-white/70 px-6 py-3.5 text-sm font-bold text-zinc-800 hover:border-cyan-400/70 hover:text-cyan-600 dark:border-white/12 dark:bg-white/5 dark:text-zinc-100">
+              <i data-lucide="link" class="h-4 w-4"></i> I have an edit link
+            </button>
+          </div>
+        </div>
+
+        <div class="mt-12 grid gap-4 sm:grid-cols-3">
+          <div class="rounded-2xl border border-zinc-200/80 bg-white/70 p-5 glass dark:border-white/[0.08] dark:bg-white/[0.03]">
+            <span class="grid h-10 w-10 place-items-center rounded-xl bg-amber-400/15 text-amber-500"><i data-lucide="pencil-line" class="h-5 w-5"></i></span>
+            <h3 class="mt-3 text-sm font-extrabold">Edit anytime</h3>
+            <p class="mt-1.5 text-[12.5px] leading-relaxed text-zinc-500">Your private link lets you update price, photos or specs whenever you want — even after approval.</p>
+          </div>
+          <div class="rounded-2xl border border-zinc-200/80 bg-white/70 p-5 glass dark:border-white/[0.08] dark:bg-white/[0.03]">
+            <span class="grid h-10 w-10 place-items-center rounded-xl bg-cyan-400/15 text-cyan-500"><i data-lucide="shield-check" class="h-5 w-5"></i></span>
+            <h3 class="mt-3 text-sm font-extrabold">Verified buyers only</h3>
+            <p class="mt-1.5 text-[12.5px] leading-relaxed text-zinc-500">Every buyer on OCHub is vetted. We handle escrow, logistics and disputes for you.</p>
+          </div>
+          <div class="rounded-2xl border border-zinc-200/80 bg-white/70 p-5 glass dark:border-white/[0.08] dark:bg-white/[0.03]">
+            <span class="grid h-10 w-10 place-items-center rounded-xl bg-emerald-400/15 text-emerald-500"><i data-lucide="banknote" class="h-5 w-5"></i></span>
+            <h3 class="mt-3 text-sm font-extrabold">Same-day payout</h3>
+            <p class="mt-1.5 text-[12.5px] leading-relaxed text-zinc-500">Once the buyer confirms delivery, we transfer your money within 24 hours. No chasing.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Form -->
+    <section id="submit" class="scroll-mt-24 border-t border-zinc-200/80 dark:border-white/[0.06] bg-white/60 dark:bg-ink-900/40">
+      <div class="mx-auto max-w-7xl px-4 py-12 lg:py-16">
+
+        <!-- Progress -->
+        <div class="mb-10">
+          <div class="flex items-center justify-between">
+            <template x-for="(s, idx) in steps" :key="s.id">
+              <div class="flex flex-1 items-center">
+                <button
+                  @click="step > s.id ? step = s.id : null"
+                  class="flex flex-col items-center gap-2"
+                  :class="step >= s.id ? 'cursor-pointer' : 'cursor-default'"
+                >
+                  <span
+                    class="grid h-9 w-9 place-items-center rounded-full border-2 text-[13px] font-extrabold transition-all duration-300"
+                    :class="step > s.id
+                      ? 'border-emerald-400 bg-emerald-400 text-ink-950'
+                      : (step === s.id
+                        ? 'border-amber-400 bg-amber-400 text-ink-950 shadow-lg shadow-amber-500/30'
+                        : 'border-zinc-300 bg-white text-zinc-400 dark:border-white/15 dark:bg-white/5')"
+                  >
+                    <i data-lucide="check" class="h-4 w-4" x-show="step > s.id"></i>
+                    <span x-show="step <= s.id" x-text="s.id"></span>
+                  </span>
+                  <span
+                    class="hidden text-[11px] font-bold uppercase tracking-wider sm:block"
+                    :class="step >= s.id ? 'text-zinc-800 dark:text-zinc-200' : 'text-zinc-400'"
+                    x-text="s.label"
+                  ></span>
+                </button>
+                <div x-show="idx < steps.length - 1" class="step-line mx-2 h-0.5 flex-1 rounded-full" :class="step > s.id ? 'bg-emerald-400' : 'bg-zinc-200 dark:bg-white/10'"></div>
+              </div>
+            </template>
+          </div>
+        </div>
+
+        <div class="grid gap-8 lg:grid-cols-[1.4fr_1fr]">
+
+          <!-- FORM COLUMN -->
+          <div class="rounded-3xl border border-zinc-200/80 bg-white/85 p-6 shadow-xl glass dark:border-white/[0.08] dark:bg-ink-900/70 sm:p-8">
+
+            <!-- STEP 1 -->
+            <div x-show="step === 1" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-x-4" x-transition:enter-end="opacity-100 translate-x-0">
+              <h2 class="font-display text-xl font-extrabold">What are you selling?</h2>
+              <p class="mt-2 text-[13px] text-zinc-500">Pick the category that best matches your item. You can change it later.</p>
+
+              <div class="mt-6 grid gap-3 sm:grid-cols-2">
+                <template x-for="c in categories" :key="c.id">
+                  <button
+                    type="button"
+                    @click="form.category = c.id"
+                    class="group flex items-start gap-4 rounded-2xl border p-4 text-left transition-all duration-300"
+                    :class="form.category === c.id
+                      ? 'border-amber-400/80 bg-amber-400/10 shadow-lg shadow-amber-500/10'
+                      : 'border-zinc-200 bg-white hover:border-amber-300 dark:border-white/10 dark:bg-white/[0.03] dark:hover:border-white/25'"
+                  >
+                    <span
+                      class="grid h-11 w-11 shrink-0 place-items-center rounded-xl transition-colors"
+                      :class="form.category === c.id ? 'bg-amber-400 text-ink-950' : 'bg-zinc-100 text-zinc-500 dark:bg-white/8 dark:text-zinc-400'"
+                    >
+                      <i :data-lucide="c.icon" class="h-5 w-5"></i>
+                    </span>
+                    <span>
+                      <span class="block text-sm font-extrabold" x-text="c.label"></span>
+                      <span class="mt-1 block text-[11.5px] leading-relaxed text-zinc-500" x-text="c.desc"></span>
+                    </span>
+                  </button>
+                </template>
+              </div>
+            </div>
+
+            <!-- STEP 2 -->
+            <div x-show="step === 2" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-x-4" x-transition:enter-end="opacity-100 translate-x-0">
+              <h2 class="font-display text-xl font-extrabold">Tell buyers about it</h2>
+              <p class="mt-2 text-[13px] text-zinc-500">Be specific — detailed listings sell up to 3× faster.</p>
+
+              <div class="mt-6 space-y-4">
+                <div>
+                  <label class="mb-1.5 block text-[11px] font-extrabold uppercase tracking-wider text-zinc-500">Item title *</label>
+                  <input type="text" x-model="form.name" maxlength="90" placeholder="e.g. iPhone 14 Pro Max 256GB Deep Purple"
+                    class="field w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm font-medium dark:border-white/10 dark:bg-white/[0.04]" />
+                  <p class="mt-1 text-right text-[10px] font-semibold text-zinc-400"><span x-text="form.name.length"></span>/90</p>
+                </div>
+
+                <div class="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label class="mb-1.5 block text-[11px] font-extrabold uppercase tracking-wider text-zinc-500">Brand *</label>
+                    <input type="text" x-model="form.brand" placeholder="e.g. Apple, Toyota, Sony"
+                      class="field w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm font-medium dark:border-white/10 dark:bg-white/[0.04]" />
+                  </div>
+                  <div>
+                    <label class="mb-1.5 block text-[11px] font-extrabold uppercase tracking-wider text-zinc-500">Condition *</label>
+                    <select x-model="form.condition" class="field w-full appearance-none rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm font-semibold dark:border-white/10 dark:bg-white/[0.04]">
+                      <option>Brand New / Sealed</option>
+                      <option>Pre-owned · Excellent</option>
+                      <option>Pre-owned · Good</option>
+                      <option>Pre-owned · Fair</option>
+                      <option>Needs repair</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label class="mb-1.5 block text-[11px] font-extrabold uppercase tracking-wider text-zinc-500">Description *</label>
+                  <textarea x-model="form.description" rows="4" maxlength="600" placeholder="Explain the condition, what is included, why you are selling, and anything a buyer should know."
+                    class="field w-full resize-none rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm font-medium dark:border-white/10 dark:bg-white/[0.04]"></textarea>
+                  <p class="mt-1 text-right text-[10px] font-semibold text-zinc-400"><span x-text="form.description.length"></span>/600</p>
+                </div>
+
+                <div>
+                  <label class="mb-1.5 block text-[11px] font-extrabold uppercase tracking-wider text-zinc-500">Key specs (one per line)</label>
+                  <textarea x-model="specsRaw" rows="4" placeholder="e.g.&#10;Battery health 92%&#10;Face ID working&#10;Original box + charger"
+                    class="field w-full resize-none rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm font-medium dark:border-white/10 dark:bg-white/[0.04]"></textarea>
+                  <p class="mt-1 text-[11px] font-semibold text-zinc-400"><span x-text="parsedSpecs.length"></span> specs added</p>
+                </div>
+
+                <div>
+                  <label class="mb-1.5 block text-[11px] font-extrabold uppercase tracking-wider text-zinc-500">Location *</label>
+                  <input type="text" x-model="form.location" placeholder="e.g. Lekki Phase 1, Lagos"
+                    class="field w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm font-medium dark:border-white/10 dark:bg-white/[0.04]" />
+                </div>
+              </div>
+            </div>
+
+            <!-- STEP 3 -->
+            <div x-show="step === 3" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-x-4" x-transition:enter-end="opacity-100 translate-x-0">
+              <h2 class="font-display text-xl font-extrabold">Photos &amp; price</h2>
+              <p class="mt-2 text-[13px] text-zinc-500">Listings with 3+ clear photos get 4× more buyer messages.</p>
+
+              <div class="mt-6">
+                <label class="mb-2 block text-[11px] font-extrabold uppercase tracking-wider text-zinc-500">Photos * <span class="text-zinc-400">(up to 6)</span></label>
+
+                <div
+                  class="dropzone rounded-2xl border-2 border-dashed border-zinc-300 bg-zinc-50/60 p-6 text-center dark:border-white/12 dark:bg-white/[0.02]"
+                  :class="dragOver ? 'drag' : ''"
+                  @dragover.prevent="dragOver = true"
+                  @dragleave.prevent="dragOver = false"
+                  @drop.prevent="handleDrop($event)"
+                >
+                  <input type="file" multiple accept="image/*" class="hidden" x-ref="fileInput" @change="handleFiles($event.target.files)">
+                  <span class="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-amber-400/15 text-amber-500">
+                    <i data-lucide="upload-cloud" class="h-6 w-6"></i>
+                  </span>
+                  <p class="mt-3 text-sm font-bold">Drag photos here or <button type="button" @click="$refs.fileInput.click()" class="text-amber-500 underline decoration-dotted">browse files</button></p>
+                  <p class="mt-1 text-[11.5px] text-zinc-500">JPG, PNG or WebP · auto-compressed · max 6 photos</p>
+                </div>
+
+                <div x-show="form.images.length > 0" class="mt-4 grid grid-cols-3 gap-3 sm:grid-cols-4">
+                  <template x-for="(img, idx) in form.images" :key="idx">
+                    <div class="group relative aspect-square overflow-hidden rounded-xl border border-zinc-200 dark:border-white/10">
+                      <img :src="img" class="h-full w-full object-cover" alt="" />
+                      <button type="button" @click="removeImage(idx)" class="absolute right-1.5 top-1.5 grid h-7 w-7 place-items-center rounded-lg bg-rose-500 text-white opacity-0 transition-opacity group-hover:opacity-100">
+                        <i data-lucide="trash-2" class="h-3.5 w-3.5"></i>
+                      </button>
+                      <span x-show="idx === 0" class="absolute bottom-1.5 left-1.5 rounded-md bg-amber-400 px-1.5 py-0.5 text-[9px] font-extrabold text-ink-950">COVER</span>
+                    </div>
+                  </template>
+                </div>
+              </div>
+
+              <div class="mt-6 grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label class="mb-1.5 block text-[11px] font-extrabold uppercase tracking-wider text-zinc-500">Asking price (₦) *</label>
+                  <input type="number" min="0" x-model.number="form.price" placeholder="e.g. 850000"
+                    class="field w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm font-semibold dark:border-white/10 dark:bg-white/[0.04]" />
+                  <p class="mt-1 text-[11px] font-semibold text-zinc-400" x-show="form.price > 0" x-text="money(form.price)"></p>
+                </div>
+                <div>
+                  <label class="mb-1.5 block text-[11px] font-extrabold uppercase tracking-wider text-zinc-500">Original price (₦) <span class="text-zinc-400">optional</span></label>
+                  <input type="number" min="0" x-model.number="form.oldPrice" placeholder="Shows a discount badge"
+                    class="field w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm font-semibold dark:border-white/10 dark:bg-white/[0.04]" />
+                </div>
+              </div>
+
+              <label class="mt-4 flex cursor-pointer items-start gap-3 rounded-xl border border-zinc-200 bg-white px-4 py-3.5 dark:border-white/10 dark:bg-white/[0.03]">
+                <input type="checkbox" x-model="form.negotiable" class="mt-0.5 h-4 w-4 rounded border-zinc-300 text-amber-500 focus:ring-amber-400">
+                <span>
+                  <span class="block text-[13px] font-bold">Price is negotiable</span>
+                  <span class="mt-0.5 block text-[11.5px] text-zinc-500">Buyers can send you an offer through OCHub.</span>
+                </span>
+              </label>
+            </div>
+
+            <!-- STEP 4 -->
+            <div x-show="step === 4" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-x-4" x-transition:enter-end="opacity-100 translate-x-0">
+              <h2 class="font-display text-xl font-extrabold">How should buyers reach you?</h2>
+              <p class="mt-2 text-[13px] text-zinc-500">Your contact details are only shared with verified buyers and OC Gadgets staff.</p>
+
+              <div class="mt-6 space-y-4">
+                <div>
+                  <label class="mb-1.5 block text-[11px] font-extrabold uppercase tracking-wider text-zinc-500">Your full name *</label>
+                  <input type="text" x-model="form.seller.name" placeholder="e.g. Adaeze Okonkwo"
+                    class="field w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm font-medium dark:border-white/10 dark:bg-white/[0.04]" />
+                </div>
+
+                <div class="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label class="mb-1.5 block text-[11px] font-extrabold uppercase tracking-wider text-zinc-500">WhatsApp number *</label>
+                    <input type="tel" x-model="form.seller.phone" placeholder="e.g. 0801 234 5678"
+                      class="field w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm font-medium dark:border-white/10 dark:bg-white/[0.04]" />
+                  </div>
+                  <div>
+                    <label class="mb-1.5 block text-[11px] font-extrabold uppercase tracking-wider text-zinc-500">Email <span class="text-zinc-400">optional</span></label>
+                    <input type="email" x-model="form.seller.email" placeholder="you@email.com"
+                      class="field w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm font-medium dark:border-white/10 dark:bg-white/[0.04]" />
+                  </div>
+                </div>
+
+                <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-zinc-200 bg-white px-4 py-3.5 dark:border-white/10 dark:bg-white/[0.03]">
+                  <input type="checkbox" x-model="form.agreeTerms" class="mt-0.5 h-4 w-4 rounded border-zinc-300 text-amber-500 focus:ring-amber-400">
+                  <span class="text-[12.5px] leading-relaxed text-zinc-600 dark:text-zinc-400">
+                    I confirm this item is legally mine to sell, the photos are genuine, and I agree to OC Gadgets' <a href="#" class="font-bold text-amber-500 underline decoration-dotted">Seller Terms</a>.
+                  </span>
+                </label>
+              </div>
+
+              <div class="mt-6 rounded-2xl border border-zinc-200 bg-zinc-50/70 p-4 dark:border-white/10 dark:bg-white/[0.02]">
+                <h3 class="text-[11px] font-extrabold uppercase tracking-wider text-zinc-500">Quick review</h3>
+                <dl class="mt-3 space-y-2 text-[12.5px]">
+                  <div class="flex justify-between gap-4"><dt class="font-semibold text-zinc-500">Category</dt><dd class="font-bold text-right" x-text="categories.find(c => c.id === form.category)?.label || '—'"></dd></div>
+                  <div class="flex justify-between gap-4"><dt class="font-semibold text-zinc-500">Title</dt><dd class="max-w-[60%] truncate text-right font-bold" x-text="form.name || '—'"></dd></div>
+                  <div class="flex justify-between gap-4"><dt class="font-semibold text-zinc-500">Photos</dt><dd class="font-bold" x-text="form.images.length + ' uploaded'"></dd></div>
+                  <div class="flex justify-between gap-4"><dt class="font-semibold text-zinc-500">Price</dt><dd class="font-bold text-amber-500" x-text="form.price ? money(form.price) : '—'"></dd></div>
+                </dl>
+              </div>
+            </div>
+
+            <!-- NAV BUTTONS -->
+            <div class="mt-8 flex items-center justify-between gap-3 border-t border-zinc-200 pt-6 dark:border-white/[0.08]">
+              <button
+                type="button"
+                @click="step > 1 ? step-- : null"
+                x-show="step > 1"
+                class="btn-press inline-flex items-center gap-2 rounded-xl border border-zinc-300 bg-white px-5 py-3 text-sm font-bold text-zinc-700 hover:border-zinc-400 dark:border-white/12 dark:bg-white/5 dark:text-zinc-200"
+              >
+                <i data-lucide="arrow-left" class="h-4 w-4"></i> Back
+              </button>
+              <div class="flex-1"></div>
+
+              <button
+                type="button"
+                x-show="step < 4"
+                @click="nextStep()"
+                class="btn-press inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 px-6 py-3 text-sm font-extrabold text-ink-950 shadow-lg shadow-amber-500/25"
+              >
+                Continue <i data-lucide="arrow-right" class="h-4 w-4"></i>
+              </button>
+
+              <button
+                type="button"
+                x-show="step === 4"
+                @click="submitListing()"
+                :disabled="submitting"
+                class="btn-press inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 px-6 py-3 text-sm font-extrabold text-white shadow-lg shadow-emerald-500/25 disabled:opacity-50"
+              >
+                <i data-lucide="check-circle-2" class="h-4 w-4" x-show="!submitting"></i>
+                <i data-lucide="loader-2" class="h-4 w-4 animate-spin" x-show="submitting"></i>
+                <span x-text="editingToken ? 'Save changes' : 'Submit for review'"></span>
+              </button>
+            </div>
+          </div>
+
+          <!-- PREVIEW COLUMN -->
+          <div class="lg:sticky lg:top-24 lg:self-start">
+            <p class="mb-3 flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-[0.18em] text-zinc-500">
+              <i data-lucide="eye" class="h-3.5 w-3.5 text-amber-500"></i> Live preview
+            </p>
+
+            <div class="card-preview overflow-hidden rounded-3xl border border-zinc-200/80 bg-white shadow-xl dark:border-white/[0.08] dark:bg-ink-900">
+              <div class="relative aspect-[4/3] w-full bg-gradient-to-br from-zinc-700 to-zinc-900">
+                <template x-if="form.images.length > 0">
+                  <img :src="form.images[0]" class="h-full w-full object-cover" alt="" />
+                </template>
+                <template x-if="form.images.length === 0">
+                  <span class="absolute inset-0 grid place-items-center text-5xl opacity-40" x-text="categoryEmoji"></span>
+                </template>
+
+                <div class="absolute left-3 top-3 flex flex-col gap-1.5">
+                  <span class="rounded-full bg-amber-400 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider text-ink-950">Pending review</span>
+                  <span class="rounded-full bg-black/55 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white backdrop-blur" x-text="form.condition || 'Condition'"></span>
+                </div>
+              </div>
+
+              <div class="p-4">
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] font-extrabold uppercase tracking-[0.14em] text-zinc-400" x-text="form.brand || 'BRAND'"></span>
+                  <span class="flex items-center gap-1 text-[11px] font-bold text-zinc-500">
+                    <i data-lucide="star" class="h-3 w-3 fill-amber-400 text-amber-400"></i> New
+                  </span>
+                </div>
+                <h3 class="mt-2 line-clamp-2 font-display text-[15px] font-bold leading-snug" x-text="form.name || 'Your item title appears here'"></h3>
+                <p class="mt-2 line-clamp-2 text-[11.5px] leading-relaxed text-zinc-500" x-text="form.description || 'Description preview…'"></p>
+
+                <div class="mt-4 flex items-end justify-between">
+                  <div>
+                    <p class="font-display text-lg font-extrabold leading-none" x-text="form.price ? money(form.price) : '₦0'"></p>
+                    <p class="mt-1.5 text-[11px] font-semibold text-zinc-400 line-through" x-show="form.oldPrice > 0" x-text="form.oldPrice ? money(form.oldPrice) : ''"></p>
+                  </div>
+                  <span class="rounded-full bg-emerald-100 px-2 py-1 text-[10px] font-extrabold text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400">In stock</span>
+                </div>
+
+                <div class="mt-4 flex gap-2">
+                  <div class="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-zinc-900 py-2.5 text-xs font-extrabold text-white dark:bg-white dark:text-ink-950">
+                    <i data-lucide="plus" class="h-3.5 w-3.5"></i> Add to cart
+                  </div>
+                  <div class="grid h-10 w-10 place-items-center rounded-xl bg-emerald-500 text-white">
+                    <i data-lucide="message-circle" class="h-4 w-4"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-5 rounded-2xl border border-cyan-400/25 bg-cyan-400/5 p-4">
+              <div class="flex items-start gap-3">
+                <i data-lucide="lightbulb" class="mt-0.5 h-5 w-5 shrink-0 text-cyan-500"></i>
+                <div class="text-[12.5px] leading-relaxed text-zinc-600 dark:text-zinc-300">
+                  <p class="font-extrabold text-zinc-900 dark:text-white">Pro tip</p>
+                  <p class="mt-1">Shoot photos in daylight against a plain background. Include the box, charger and any visible marks — honesty gets you approved faster.</p>
+                </div>
+              </div>
+            </div>
+
+            <button @click="saveDraft()" type="button" class="btn-press mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-zinc-200 bg-white px-4 py-3 text-xs font-extrabold text-zinc-600 hover:border-amber-400/70 dark:border-white/10 dark:bg-white/5 dark:text-zinc-300">
+              <i data-lucide="save" class="h-3.5 w-3.5"></i> Save draft locally
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ---------- SUCCESS VIEW ---------- -->
+  <div x-show="view === 'success'" x-cloak class="mx-auto max-w-3xl px-4 py-16 lg:py-24">
+    <div class="rounded-3xl border border-zinc-200/80 bg-white/85 p-6 shadow-2xl glass dark:border-white/[0.08] dark:bg-ink-900/70 sm:p-10 text-center">
+      <span class="mx-auto grid h-20 w-20 place-items-center rounded-3xl bg-gradient-to-br from-emerald-400 to-emerald-500 text-white shadow-xl shadow-emerald-500/30">
+        <i data-lucide="check-check" class="h-9 w-9"></i>
+      </span>
+
+      <h1 class="mt-7 font-display text-2xl font-extrabold sm:text-3xl" x-text="editingToken ? 'Listing updated!' : 'Listing submitted!'"></h1>
+      <p class="mx-auto mt-3 max-w-md text-[14px] leading-relaxed text-zinc-600 dark:text-zinc-400">
+        Our team is reviewing your submission now. You will get a WhatsApp message on <span class="font-bold text-zinc-900 dark:text-zinc-200" x-text="savedListing?.seller?.phone || '—'"></span> once it's approved — usually within 24 hours.
+      </p>
+
+      <div class="mt-8 rounded-2xl border border-amber-400/35 bg-amber-400/8 p-5 text-left">
+        <p class="text-[11px] font-extrabold uppercase tracking-wider text-amber-600 dark:text-amber-400">🔐 Your private edit link</p>
+        <p class="mt-2 text-[12.5px] leading-relaxed text-zinc-600 dark:text-zinc-400">
+          Save this link — anyone with it can edit your listing. Don't share it publicly.
+        </p>
+        <div class="mt-3 flex flex-col gap-2 sm:flex-row">
+          <input
+            type="text"
+            readonly
+            :value="editLink"
+            class="field flex-1 rounded-xl border border-zinc-200 bg-white px-3.5 py-3 text-[12px] font-mono font-semibold text-zinc-700 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-200"
+            @focus="$event.target.select()"
+          />
+          <button @click="copyLink()" class="btn-press inline-flex items-center justify-center gap-2 rounded-xl bg-zinc-900 px-5 py-3 text-xs font-extrabold text-white dark:bg-white dark:text-ink-950">
+            <i data-lucide="copy" class="h-3.5 w-3.5"></i> Copy
+          </button>
+        </div>
+      </div>
+
+      <div class="mt-4 grid gap-3 sm:grid-cols-2">
+        <button @click="goToEditLink()" class="btn-press flex items-center justify-center gap-2 rounded-xl border border-zinc-200 bg-white px-5 py-3.5 text-sm font-bold text-zinc-800 hover:border-amber-400/70 dark:border-white/12 dark:bg-white/5 dark:text-zinc-100">
+          <i data-lucide="pencil-line" class="h-4 w-4"></i> Edit my listing now
+        </button>
+        <a :href="waLink('Hello OC Gadgets 👋 I just submitted a listing on the Seller Portal.\\n\\nListing ID: ' + (savedListing?.id || '') + '\\nItem: ' + (savedListing?.name || '') + '\\n\\nPlease confirm receipt.')" target="_blank" rel="noopener" class="btn-press flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 px-5 py-3.5 text-sm font-extrabold text-white shadow-lg shadow-emerald-500/25">
+          <i data-lucide="message-circle" class="h-4 w-4"></i> Notify OC on WhatsApp
+        </a>
+      </div>
+
+      <div class="mt-8 rounded-2xl border border-zinc-200 bg-zinc-50/70 p-4 dark:border-white/10 dark:bg-white/[0.02] text-left">
+        <p class="text-[11px] font-extrabold uppercase tracking-wider text-zinc-500">Submission summary</p>
+        <dl class="mt-3 space-y-2 text-[12.5px]">
+          <div class="flex justify-between gap-4"><dt class="font-semibold text-zinc-500">Listing ID</dt><dd class="font-mono font-bold" x-text="savedListing?.id || '—'"></dd></div>
+          <div class="flex justify-between gap-4"><dt class="font-semibold text-zinc-500">Status</dt><dd class="font-bold text-amber-500">Pending review</dd></div>
+          <div class="flex justify-between gap-4"><dt class="font-semibold text-zinc-500">Item</dt><dd class="max-w-[60%] truncate text-right font-bold" x-text="savedListing?.name || '—'"></dd></div>
+          <div class="flex justify-between gap-4"><dt class="font-semibold text-zinc-500">Price</dt><dd class="font-bold" x-text="savedListing ? money(savedListing.price) : '—'"></dd></div>
+        </dl>
+      </div>
+
+      <button @click="startNew()" class="mt-8 text-[12px] font-bold uppercase tracking-wider text-zinc-400 transition-colors hover:text-amber-500">
+        + Submit another item
+      </button>
+    </div>
+  </div>
+
+  <!-- ---------- TRACK VIEW ---------- -->
+  <div x-show="view === 'track'" x-cloak class="mx-auto max-w-3xl px-4 py-16 lg:py-24">
+    <div class="rounded-3xl border border-zinc-200/80 bg-white/85 p-6 shadow-2xl glass dark:border-white/[0.08] dark:bg-ink-900/70 sm:p-10">
+      <div class="flex items-center gap-3">
+        <span class="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-amber-400 to-cyan-400 text-ink-950">
+          <i data-lucide="search" class="h-5 w-5"></i>
+        </span>
+        <div>
+          <h1 class="font-display text-xl font-extrabold">Track or edit your listing</h1>
+          <p class="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Paste your edit link or listing ID</p>
+        </div>
+      </div>
+
+      <div class="mt-6 flex flex-col gap-2 sm:flex-row">
+        <input
+          type="text"
+          x-model="trackQuery"
+          placeholder="Paste edit link or type LST-XXXXXX"
+          class="field flex-1 rounded-xl border border-zinc-200 bg-white px-4 py-3.5 text-sm font-medium dark:border-white/10 dark:bg-white/[0.04]"
+          @keydown.enter="lookupToken()"
+        />
+        <button @click="lookupToken()" class="btn-press inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 px-6 py-3.5 text-sm font-extrabold text-ink-950 shadow-lg shadow-amber-500/25">
+          <i data-lucide="arrow-right" class="h-4 w-4"></i> Find
+        </button>
+      </div>
+
+      <div x-show="trackError" x-cloak class="mt-5 rounded-2xl border border-rose-400/35 bg-rose-400/8 p-4">
+        <p class="text-[13px] font-semibold text-rose-600 dark:text-rose-400" x-text="trackError"></p>
+      </div>
+
+      <div x-show="trackResult" x-cloak class="mt-6">
+        <template x-if="trackResult">
+          <div class="rounded-2xl border border-zinc-200 bg-zinc-50/70 p-5 dark:border-white/10 dark:bg-white/[0.02]">
+            <div class="flex items-start justify-between gap-4">
+              <div class="min-w-0">
+                <p class="font-mono text-[11px] font-bold text-zinc-400" x-text="trackResult.id"></p>
+                <h3 class="mt-1 truncate font-display text-base font-extrabold" x-text="trackResult.name"></h3>
+                <p class="mt-1 text-[12px] font-semibold text-zinc-500" x-text="trackResult.brand + ' · ' + trackResult.condition"></p>
+              </div>
+              <span
+                class="shrink-0 rounded-full px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-wider"
+                :class="{
+                  'bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400': trackResult.status === 'pending',
+                  'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400': trackResult.status === 'approved',
+                  'bg-rose-100 text-rose-700 dark:bg-rose-500/15 dark:text-rose-400': trackResult.status === 'rejected'
+                }"
+                x-text="trackResult.status"
+              ></span>
+            </div>
+
+            <div x-show="trackResult.status === 'rejected' && trackResult.rejectionReason" class="mt-4 rounded-xl border border-rose-400/30 bg-rose-400/8 p-3.5">
+              <p class="text-[11px] font-extrabold uppercase tracking-wider text-rose-600 dark:text-rose-400">Admin feedback</p>
+              <p class="mt-1.5 text-[12.5px] leading-relaxed text-zinc-700 dark:text-zinc-300" x-text="trackResult.rejectionReason"></p>
+            </div>
+
+            <div class="mt-5 flex flex-wrap gap-2">
+              <button @click="loadForEdit(trackResult)" class="btn-press inline-flex items-center gap-2 rounded-xl bg-zinc-900 px-4 py-2.5 text-xs font-extrabold text-white dark:bg-white dark:text-ink-950">
+                <i data-lucide="pencil-line" class="h-3.5 w-3.5"></i> Edit listing
+              </button>
+              <button @click="copyText(editLinkFor(trackResult.token))" class="btn-press inline-flex items-center gap-2 rounded-xl border border-zinc-300 bg-white px-4 py-2.5 text-xs font-extrabold text-zinc-700 dark:border-white/12 dark:bg-white/5 dark:text-zinc-200">
+                <i data-lucide="copy" class="h-3.5 w-3.5"></i> Copy edit link
+              </button>
+              <a :href="waLink('Hello OC Gadgets 👋 I am following up on listing ' + trackResult.id + ' (' + trackResult.name + '). Any update?')" target="_blank" rel="noopener" class="btn-press inline-flex items-center gap-2 rounded-xl bg-emerald-500 px-4 py-2.5 text-xs font-extrabold text-white">
+                <i data-lucide="message-circle" class="h-3.5 w-3.5"></i> Follow up
+              </a>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <button @click="view = 'wizard'" class="mt-8 text-[12px] font-bold uppercase tracking-wider text-zinc-400 transition-colors hover:text-amber-500">
+        ← Back to new listing
+      </button>
+    </div>
+  </div>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="border-t border-zinc-200/80 dark:border-white/[0.06] bg-zinc-100/70 dark:bg-ink-950">
+  <div class="mx-auto max-w-7xl px-4 py-10">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <p class="text-[11.5px] leading-relaxed text-zinc-500">
+        <span class="font-bold text-zinc-700 dark:text-zinc-300">OC Gadgets</span> · RC 1847392 · BuyFromOc Seller Portal is operated exclusively by OC Gadgets.
+      </p>
+      <div class="flex gap-4 text-[11.5px] font-bold text-zinc-500">
+        <a href="index.html" class="hover:text-amber-500">Marketplace</a>
+        <a href="admin-dashboard.html" class="hover:text-amber-500">Admin</a>
+        <a href="#" class="hover:text-amber-500">Seller Terms</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ============ SCRIPTS ============ -->
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script>
+  let iconTimer = null;
+  window.refreshIcons = function () {
+    if (window.lucide && typeof window.lucide.createIcons === 'function') {
+      try { window.lucide.createIcons(); } catch (e) {}
+    }
+  };
+  function scheduleIconRefresh() {
+    clearTimeout(iconTimer);
+    iconTimer = setTimeout(window.refreshIcons, 60);
+  }
+
+  function compressImage(file, maxW, quality) {
+    maxW = maxW || 1200;
+    quality = quality || 0.72;
+    return new Promise(function (resolve, reject) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const img = new Image();
+        img.onload = function () {
+          const canvas = document.createElement('canvas');
+          let w = img.width, h = img.height;
+          if (w > maxW) { h = Math.round(h * maxW / w); w = maxW; }
+          canvas.width = w; canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          try { resolve(canvas.toDataURL('image/jpeg', quality)); }
+          catch (err) { reject(err); }
+        };
+        img.onerror = reject;
+        img.src = e.target.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function sellerApp() {
+    return {
+      dark: true,
+      toggleTheme() {
+        this.dark = !this.dark;
+        document.documentElement.classList.toggle('dark', this.dark);
+        try { localStorage.setItem('bfo-theme', this.dark ? 'dark' : 'light'); } catch (e) {}
+        this.toast(this.dark ? 'Dark mode enabled' : 'Light mode enabled', 'info');
+      },
+
+      toasts: [],
+      toast(message, type) {
+        type = type || 'success';
+        const id = Date.now() + Math.random();
+        this.toasts.push({ id, message, type });
+        setTimeout(() => { this.toasts = this.toasts.filter(t => t.id !== id); }, 3800);
+      },
+
+      whatsapp: '2348012345678',
+      STORAGE_KEY: 'bfo_listings',
+
+      view: 'wizard',
+
+      steps: [
+        { id: 1, label: 'Category' },
+        { id: 2, label: 'Details' },
+        { id: 3, label: 'Photos & Price' },
+        { id: 4, label: 'Contact' },
+      ],
+      step: 1,
+
+      categories: [
+        { id: 'phones', label: 'Phones & Tablets', icon: 'smartphone', desc: 'iPhones, Android, iPads and tablets.' },
+        { id: 'cars', label: 'Cars & Automotive', icon: 'car', desc: 'Sedans, SUVs and commercial vehicles.' },
+        { id: 'gaming', label: 'PS & Gaming Gear', icon: 'gamepad-2', desc: 'Consoles, controllers, games, VR.' },
+        { id: 'accessories', label: 'Accessories & Other', icon: 'headphones', desc: 'Audio, wearables, smart devices.' },
+      ],
+
+      form: {
+        category: '',
+        name: '',
+        brand: '',
+        condition: 'Pre-owned · Excellent',
+        description: '',
+        location: '',
+        images: [],
+        price: 0,
+        oldPrice: 0,
+        negotiable: true,
+        seller: { name: '', phone: '', email: '' },
+        agreeTerms: false,
+      },
+      specsRaw: '',
+      dragOver: false,
+      submitting: false,
+
+      listings: [],
+      editingToken: null,
+      editingId: null,
+      savedListing: null,
+
+      trackQuery: '',
+      trackResult: null,
+      trackError: '',
+
+      get parsedSpecs() {
+        return this.specsRaw
+          .split('\n')
+          .map(s => s.trim())
+          .filter(s => s.length > 0)
+          .slice(0, 12);
+      },
+      get categoryEmoji() {
+        const map = { phones: '📱', cars: '🚘', gaming: '🎮', accessories: '🎧' };
+        return map[this.form.category] || '📦';
+      },
+      get editLink() {
+        if (!this.savedListing) return '';
+        return this.editLinkFor(this.savedListing.token);
+      },
+
+      money(n) { return '₦' + Number(n || 0).toLocaleString('en-NG'); },
+      waLink(msg) { return 'https://wa.me/' + this.whatsapp + '?text=' + encodeURIComponent(msg); },
+      editLinkFor(token) {
+        const base = location.origin + location.pathname;
+        return base + '?edit=' + token;
+      },
+      trackLinkFor(token) {
+        const base = location.origin + location.pathname;
+        return base + '?track=' + token;
+      },
+      genId() {
+        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+        let s = '';
+        for (let i = 0; i < 6; i++) s += chars[Math.floor(Math.random() * chars.length)];
+        return 'LST-' + s;
+      },
+      genToken() {
+        const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+        let s = '';
+        for (let i = 0; i < 18; i++) s += chars[Math.floor(Math.random() * chars.length)];
+        return 'tok_' + s;
+      },
+
+      loadListings() {
+        try {
+          const raw = localStorage.getItem(this.STORAGE_KEY);
+          this.listings = raw ? JSON.parse(raw) : [];
+        } catch (e) { this.listings = []; }
+      },
+      saveListings() {
+        try {
+          localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.listings));
+          return true;
+        } catch (e) {
+          this.toast('Storage full — try removing a photo', 'error');
+          return false;
+        }
+      },
+
+      nextStep() {
+        if (!this.validateStep(this.step)) return;
+        if (this.step < 4) this.step++;
+        this.$nextTick(() => scheduleIconRefresh());
+        const el = document.getElementById('submit');
+        if (el) window.scrollTo({ top: el.offsetTop - 100, behavior: 'smooth' });
+      },
+
+      validateStep(s) {
+        if (s === 1) {
+          if (!this.form.category) { this.toast('Please choose a category', 'error'); return false; }
+          return true;
+        }
+        if (s === 2) {
+          if (!this.form.name.trim() || this.form.name.trim().length < 5) { this.toast('Enter a descriptive item title', 'error'); return false; }
+          if (!this.form.brand.trim()) { this.toast('Please enter the brand', 'error'); return false; }
+          if (!this.form.description.trim() || this.form.description.trim().length < 30) { this.toast('Description must be at least 30 characters', 'error'); return false; }
+          if (!this.form.location.trim()) { this.toast('Please add your location', 'error'); return false; }
+          return true;
+        }
+        if (s === 3) {
+          if (this.form.images.length === 0) { this.toast('Please upload at least one photo', 'error'); return false; }
+          if (!this.form.price || this.form.price <= 0) { this.toast('Please enter a valid price', 'error'); return false; }
+          return true;
+        }
+        if (s === 4) {
+          if (!this.form.seller.name.trim()) { this.toast('Please enter your full name', 'error'); return false; }
+          if (!this.form.seller.phone.trim() || this.form.seller.phone.trim().length < 7) { this.toast('Please enter a valid WhatsApp number', 'error'); return false; }
+          if (!this.form.agreeTerms) { this.toast('Please accept the seller terms', 'error'); return false; }
+          return true;
+        }
+        return true;
+      },
+
+      async handleFiles(files) {
+        if (!files || files.length === 0) return;
+        const remaining = 6 - this.form.images.length;
+        if (remaining <= 0) { this.toast('Maximum 6 photos allowed', 'error'); return; }
+
+        const picked = Array.from(files).slice(0, remaining);
+        for (const file of picked) {
+          if (!file.type.startsWith('image/')) { this.toast('Only image files are allowed', 'error'); continue; }
+          try {
+            const dataUrl = await compressImage(file);
+            this.form.images.push(dataUrl);
+          } catch (e) {
+            this.toast('Could not process ' + file.name, 'error');
+          }
+        }
+        this.toast(picked.length + ' photo(s) added', 'success');
+        scheduleIconRefresh();
+      },
+
+      handleDrop(evt) {
+        this.dragOver = false;
+        const files = evt.dataTransfer && evt.dataTransfer.files;
+        if (files) this.handleFiles(files);
+      },
+
+      removeImage(idx) {
+        this.form.images.splice(idx, 1);
+        this.toast('Photo removed', 'info');
+      },
+
+      async submitListing() {
+        if (!this.validateStep(4)) return;
+        this.submitting = true;
+
+        await new Promise(r => setTimeout(r, 550));
+
+        const now = new Date().toISOString();
+        const specs = this.parsedSpecs;
+
+        if (this.editingToken) {
+          const idx = this.listings.findIndex(l => l.token === this.editingToken);
+          if (idx !== -1) {
+            const prev = this.listings[idx];
+            this.listings[idx] = Object.assign({}, prev, {
+              category: this.form.category,
+              name: this.form.name.trim(),
+              brand: this.form.brand.trim(),
+              condition: this.form.condition,
+              description: this.form.description.trim(),
+              location: this.form.location.trim(),
+              images: this.form.images.slice(),
+              price: Number(this.form.price) || 0,
+              oldPrice: Number(this.form.oldPrice) || 0,
+              negotiable: this.form.negotiable,
+              specs: specs,
+              seller: { ...this.form.seller },
+              updatedAt: now,
+              status: 'pending',
+              rejectionReason: '',
+              editCount: (prev.editCount || 0) + 1,
+            });
+            this.savedListing = this.listings[idx];
+            this.saveListings();
+            this.toast('Listing updated — back in review queue', 'success');
+          }
+        } else {
+          const listing = {
+            id: this.genId(),
+            token: this.genToken(),
+            status: 'pending',
+            category: this.form.category,
+            name: this.form.name.trim(),
+            brand: this.form.brand.trim(),
+            condition: this.form.condition,
+            description: this.form.description.trim(),
+            location: this.form.location.trim(),
+            images: this.form.images.slice(),
+            price: Number(this.form.price) || 0,
+            oldPrice: Number(this.form.oldPrice) || 0,
+            negotiable: this.form.negotiable,
+            specs: specs,
+            seller: { ...this.form.seller },
+            createdAt: now,
+            updatedAt: now,
+            reviewedAt: null,
+            reviewedBy: '',
+            rejectionReason: '',
+            featured: false,
+            views: 0,
+            source: 'seller',
+          };
+          this.listings.unshift(listing);
+          this.savedListing = listing;
+          this.saveListings();
+          this.toast('Listing submitted for review 🎉', 'success');
+        }
+
+        this.submitting = false;
+        this.view = 'success';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        scheduleIconRefresh();
+      },
+
+      saveDraft() {
+        try {
+          localStorage.setItem('bfo_seller_draft', JSON.stringify({
+            form: this.form,
+            specsRaw: this.specsRaw,
+            step: this.step,
+          }));
+          this.toast('Draft saved locally', 'success');
+        } catch (e) {
+          this.toast('Could not save draft', 'error');
+        }
+      },
+      loadDraft() {
+        try {
+          const raw = localStorage.getItem('bfo_seller_draft');
+          if (!raw) return;
+          const d = JSON.parse(raw);
+          if (d.form) this.form = Object.assign(this.form, d.form);
+          if (typeof d.specsRaw === 'string') this.specsRaw = d.specsRaw;
+          if (typeof d.step === 'number') this.step = d.step;
+        } catch (e) {}
+      },
+      clearDraft() {
+        try { localStorage.removeItem('bfo_seller_draft'); } catch (e) {}
+      },
+
+      loadForEdit(listing) {
+        this.editingToken = listing.token;
+        this.editingId = listing.id;
+        this.form = {
+          category: listing.category,
+          name: listing.name,
+          brand: listing.brand,
+          condition: listing.condition,
+          description: listing.description,
+          location: listing.location || '',
+          images: (listing.images || []).slice(),
+          price: listing.price,
+          oldPrice: listing.oldPrice || 0,
+          negotiable: !!listing.negotiable,
+          seller: { ...(listing.seller || { name: '', phone: '', email: '' }) },
+          agreeTerms: true,
+        };
+        this.specsRaw = (listing.specs || []).join('\n');
+        this.step = 1;
+        this.view = 'wizard';
+        this.savedListing = null;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        this.toast('Editing ' + listing.id, 'info');
+        scheduleIconRefresh();
+      },
+
+      goToEditLink() {
+        if (this.savedListing) {
+          history.replaceState(null, '', '?edit=' + this.savedListing.token);
+          this.toast('Edit link is now in your address bar', 'info');
+        }
+      },
+
+      startNew() {
+        this.editingToken = null;
+        this.editingId = null;
+        this.savedListing = null;
+        this.form = {
+          category: '',
+          name: '',
+          brand: '',
+          condition: 'Pre-owned · Excellent',
+          description: '',
+          location: '',
+          images: [],
+          price: 0,
+          oldPrice: 0,
+          negotiable: true,
+          seller: { name: '', phone: '', email: '' },
+          agreeTerms: false,
+        };
+        this.specsRaw = '';
+        this.step = 1;
+        this.view = 'wizard';
+        this.clearDraft();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      },
+
+      lookupToken() {
+        this.trackError = '';
+        this.trackResult = null;
+        const q = (this.trackQuery || '').trim();
+        if (!q) { this.trackError = 'Paste your edit link or listing ID to continue.'; return; }
+
+        let token = q;
+        try {
+          if (q.indexOf('?') !== -1) {
+            const url = new URL(q, location.origin);
+            token = url.searchParams.get('edit') || url.searchParams.get('track') || q;
+          }
+        } catch (e) {}
+
+        const found = this.listings.find(l => l.token === token || l.id === q.toUpperCase());
+        if (found) {
+          this.trackResult = found;
+          this.toast('Listing found', 'success');
+          scheduleIconRefresh();
+        } else {
+          this.trackError = 'No listing found for that link or ID. Double-check and try again.';
+        }
+      },
+
+      async copyText(text) {
+        try {
+          await navigator.clipboard.writeText(text);
+          this.toast('Copied to clipboard', 'success');
+        } catch (e) {
+          this.toast('Copy failed — select and copy manually', 'error');
+        }
+      },
+      copyLink() {
+        if (this.editLink) this.copyText(this.editLink);
+      },
+
+      init() {
+        let saved = null;
+        try { saved = localStorage.getItem('bfo-theme'); } catch (e) {}
+        this.dark = saved ? saved === 'dark' : true;
+        document.documentElement.classList.toggle('dark', this.dark);
+
+        this.loadListings();
+
+        const params = new URLSearchParams(location.search);
+        const editToken = params.get('edit');
+        const trackToken = params.get('track');
+
+        if (editToken) {
+          const found = this.listings.find(l => l.token === editToken);
+          if (found) {
+            this.loadForEdit(found);
+          } else {
+            this.toast('Edit link not recognised — starting a new listing', 'error');
+            this.loadDraft();
+          }
+        } else if (trackToken) {
+          this.view = 'track';
+          this.trackQuery = trackToken;
+          this.lookupToken();
+        } else {
+          this.loadDraft();
+        }
+
+        window.addEventListener('storage', (e) => {
+          if (e.key === this.STORAGE_KEY) this.loadListings();
+        });
+
+        this.$nextTick(() => scheduleIconRefresh());
+        setTimeout(scheduleIconRefresh, 400);
+      },
+    };
+  }
+
+  document.addEventListener('DOMContentLoaded', () => scheduleIconRefresh());
+</script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
+</body>
+</html>
